@@ -26,9 +26,32 @@ from isaacsim.robot_motion.motion_generation import ArticulationMotionPolicy, Rm
 from isaacsim.robot_motion.motion_generation.interface_config_loader import load_supported_motion_policy_config
 from isaacsim.storage.native import get_assets_root_path
 
+import time
 
-ROBOT_POS = np.array([0.0, -1.5, 0.5])
+ROBOT_POS = np.array([0.0, -1.5, 0.1])
 ROBOT_ORI = euler_angles_to_quats([0, 0, 90])
+
+cube_offset = {
+    "pre" : np.array([0,0.2,0]),
+    "cur" : np.array([0,0,0]),
+    "post" : np.array([0,0.1,0.05])
+}
+geforce_offset = {
+    "pre" : np.array([0,0,0.1]),
+    "cur" : np.array([-0.04,0,-0.03]),
+    "post" : np.array([0,0,0])
+}
+tape_offset = {
+    "pre" : np.array([0,0.1,0.05]),
+    "cur" : np.array([0,0,0.01]),
+    "post" : np.array([0,0.1,0.05])
+}
+
+close_position = {
+    "cube" : np.array([0.02,0.02]),
+    "geforce" : np.array([0.00,0.00]),
+    "tape" : np.array([0.0105,0.0105])
+}
 
 class PackingScript:
     def __init__(self):
@@ -68,6 +91,18 @@ class PackingScript:
             orientation=ROBOT_ORI
         )
 
+        # side table
+        side_table_prim_path = "/side_table"
+        side_table_usd_path = get_assets_root_path() + "/Isaac/Environments/Hospital/Props/SM_SideTable_02a.usd"
+        add_reference_to_stage(side_table_usd_path,side_table_prim_path)
+        self._side_table = SingleXFormPrim(
+            name="side_table",
+            prim_path=side_table_prim_path,
+            position=np.array([0.7, -1.5, 0]),
+            orientation=euler_angles_to_quats([0, 0, np.deg2rad(90)]),
+            scale=np.array([1,1,0.6])
+        )
+
         # shelve
         shelve_asset_path = os.path.join(general_asset_path, "shelve_large","shelve_large.usd")
         shelve_prim_path = "/World/Shelve"
@@ -93,43 +128,86 @@ class PackingScript:
         #     # visible=False
         # )
 
-        self._table_obstacle = VisualCuboid(
-            prim_path="/World/Obstacles/TableProxy",
-            name="table_obstacle",
-            position=np.array([0., -1.0, 0.58]),
-            scale=np.array([1.0, 0.5, 0.3]),     
-            visible=False,             
-        )
+        self.obstacles = [
+            VisualCuboid(
+                prim_path="/World/Obstacles/TableProxy",
+                name="obstacle1",
+                position=np.array([0., -1.0, 0.58]),
+                scale=np.array([1.0, 0.5, 0.3]),     
+                visible=False,             
+            ), 
 
-        # self.Franka_support = VisualCuboid(
-        #     name="f_sup",
-        #     prim_path="/World/franka_support",
-        #     scale=np.array([0.2, 0.2, 0.5]),
-        #     position=np.array([0.0, -1.5, 0.4]),
-        #     color=np.array([0.0, 0.0, 0.0]),
-        # )
+            VisualCuboid(
+                prim_path="/World/Obstacles/SideTableProxy",
+                name="obstacle2",
+                position=np.array([0.7, -1.5, 0.33]),
+                scale=np.array([0.4, 1, 0.3]),     
+                visible=False,             
+            )
+
+        ]
+        
+        # tape
+        tape_asset_path = os.path.join(general_asset_path, "measuring_tape", "tape", "tape.usd")
+        add_reference_to_stage(tape_asset_path,"/tape1")
+        add_reference_to_stage(tape_asset_path,"/tape2")
+        self._tapes = [
+            SingleXFormPrim(
+                name="tape_1",
+                prim_path="/tape1",
+                position=np.array([-0.15,-2.2,0.57]),
+                orientation=euler_angles_to_quats([0, 0 ,np.pi/2])
+            ),
+            SingleXFormPrim(
+                name="tape_2",
+                prim_path="/tape2",
+                position=np.array([0,-2.2,0.57]),
+                orientation=euler_angles_to_quats([0, 0 ,np.pi/2])
+            )
+        ]
+        
+        # geforce
+        geforce_asset_path = os.path.join(general_asset_path, "geforce3080", "geforce3080.usd")
+        add_reference_to_stage(geforce_asset_path, "/geforce_1")
+        add_reference_to_stage(geforce_asset_path, "/geforce_2")
+        self._geforce = [
+            SingleXFormPrim(
+                name="geforce_1",
+                prim_path="/geforce_1",
+                position=np.array([0.6,-1.6,0.54]),
+                orientation=euler_angles_to_quats([0, 0 ,0]),
+                scale=[0.5,0.5,0.5]
+            ),
+            SingleXFormPrim(
+                name="geforce_2",
+                prim_path="/geforce_2",
+                position=np.array([0.6,-1.4,0.54]),
+                orientation=euler_angles_to_quats([0, 0 ,0]),
+                scale=[0.5,0.5,0.5]
+            )
+        ]
 
         self._blue_cubes = [
             DynamicCuboid(
             name="bc1",
-            position=np.array([0., -2.2, 1.05]),
+            position=np.array([0., -2.2, 1.0]),
             scale=np.array([1.,1.,2.5]),
             prim_path="/World/blue_cube_1",
             size=0.05,
-            color=np.array([1, 0, 0]),),
+            color=np.array([0, 0, 1]),),
             DynamicCuboid(
             name="bc2",
             scale=np.array([1.,1.,2.5]),
-            position=np.array([0.3, -2.2, 0.65]),
+            position=np.array([0.3, -2.2, 0.6]),
             prim_path="/World/blue_cube_2",
             size=0.05,
-            color=np.array([1, 0, 0]),),
+            color=np.array([0, 0, 1]),),
         ]
 
         self._ground_plane = GroundPlane("/World/Ground")
 
         # Return assets that were added to the stage so that they can be registered with the core.World
-        return self._articulation, self._ground_plane, *self._blue_cubes, self._shelve, self._table_obstacle
+        return self._articulation, self._ground_plane, *self._blue_cubes, self._shelve, *self.obstacles, *self._geforce
 
     def setup(self):
         """
@@ -141,12 +219,16 @@ class PackingScript:
         # Loading RMPflow can be done quickly for supported robots
         rmp_config = load_supported_motion_policy_config("Franka", "RMPflow")
 
+        # print(rmp_config)
+
         # Initialize an RmpFlow object
         self._rmpflow = RmpFlow(**rmp_config)
         self._rmpflow.set_robot_base_pose(ROBOT_POS,ROBOT_ORI)
+        
         # self._rmpflow.visualize_collision_spheres()
 
-        self._rmpflow.add_obstacle(self._table_obstacle)
+        for obs in self.obstacles:
+            self._rmpflow.add_obstacle(obs)
 
         # Use the ArticulationMotionPolicy wrapper object to connect rmpflow to the Franka robot articulation.
         self._articulation_rmpflow = ArticulationMotionPolicy(self._articulation, self._rmpflow)
@@ -185,39 +267,56 @@ class PackingScript:
             return True
 
     def my_script(self):
+        self._delivery = True
+        self._delivery_argument = {"tape":2}
+        yield from ()
+        if self._delivery:
+            target_pos = np.array([0.1, -1.1, 0.75]) # A tuner
+            base_orientation = euler_angles_to_quats([np.pi,0,0])
+            for obj_name, val in self._delivery_argument.items():
+                if "geforce" in obj_name:
+                    shelve_take_orientation = euler_angles_to_quats([np.pi,0,0])
+                    offsets = geforce_offset
+                    close_pos = close_position["geforce"]
+                    obj_placeholder = self._geforce
+                elif "cube" in obj_name:
+                    shelve_take_orientation = euler_angles_to_quats([0, np.pi/2, -np.pi/2])
+                    offsets = cube_offset
+                    close_pos = close_position["cube"]
+                    obj_placeholder = self._blue_cubes
+                elif "tape" in obj_name:
+                    shelve_take_orientation = euler_angles_to_quats([0, np.pi/2, -np.pi/2])
+                    offsets = tape_offset
+                    close_pos = close_position["tape"]
+                    obj_placeholder = self._tapes
+                else:
+                    print("[PACKING] Unknown object : ", obj_name)
+                    continue
+            
+                yield from self.open_gripper_franka(self._articulation)  
 
-        while True:
-            if self._delivery:
-                target_pos = np.array([0., -1.0, 0.9])
-                shelve_take_orientation = euler_angles_to_quats([0, np.pi/2, -np.pi/2])
-                base_orientation = euler_angles_to_quats([np.pi,0,0])
-
-                yield from self.open_gripper_franka(self._articulation)
-
-                for cube in self._blue_cubes:
-                    T_robot_cube = transformations.get_relative_transform(cube.prim, self._articulation.prim) # Pos du cube dans le repere robot
-                    # cube_pos, cube_ori = transformations.pose_from_tf_matrix(T_robot_cube)
-                    # post_take = transformations.get_translation_from_target(np.array([0.,0.,0.05]),cube.prim,self._articulation.prim)
-                    # pre_take = transformations.get_translation_from_target(np.array([0.,0.3,0.0]),cube.prim,self._articulation.prim)
-
-                    cube_pos, cube_ori = cube.get_world_pose()
-                    post_take = cube_pos + np.array([0.,0.,0.1])
-                    pre_take = cube_pos + np.array([0.,0.3,0.0])
+                for i in range(val):
+                    obj = obj_placeholder[i]
+                    obj_pos, _ = obj.get_world_pose()
                     
                     success = yield from self.goto_position(
-                        pre_take , shelve_take_orientation, self._articulation, self._rmpflow
+                        obj_pos + offsets["pre"] , shelve_take_orientation, self._articulation, self._rmpflow
                     )
                     print("[PACKING] pre take : ", success)
 
+                    obj_pos, _ = obj.get_world_pose()
+
                     success = yield from self.goto_position(
-                        cube_pos , shelve_take_orientation, self._articulation, self._rmpflow
+                        obj_pos + offsets["cur"], shelve_take_orientation, self._articulation, self._rmpflow
                     )
                     print("[PACKING] take : ", success)
 
-                    yield from self.close_gripper_franka(self._articulation, close_position=np.array([0.015, 0.015]))
+                    yield from self.close_gripper_franka(self._articulation, close_position=close_pos, atol=0.01)
+
+                    print("[PACKING] closed")
 
                     success = yield from self.goto_position(
-                        post_take , shelve_take_orientation, self._articulation, self._rmpflow, timeout=200
+                        obj_pos + offsets["post"] , shelve_take_orientation, self._articulation, self._rmpflow, timeout=200
                     )
                     print("[PACKING] post take : ", success)
 
@@ -227,9 +326,8 @@ class PackingScript:
                     print("[PACKING] deposit : ", success)
 
                     yield from self.open_gripper_franka(self._articulation)
-                    self._delivery = False
-                    
-            yield from ()
+            self._delivery = False
+            raise StopIteration
 
 
     ################################### Functions

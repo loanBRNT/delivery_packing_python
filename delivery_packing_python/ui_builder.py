@@ -199,7 +199,7 @@ class UIBuilder:
             step (float): The dt of the current physics step
         """
         done = self._packing_script.update(step)
-        self._delivering_script.update(step)
+        # self._delivering_script.update(step)
         if done:
             self._scenario_state_btn.enabled = False
 
@@ -213,12 +213,12 @@ class UIBuilder:
         the timeline is paused, which means that no physics steps will occur until the user makes it play either programmatically or
         through the left-hand UI toolbar.
         """
-        url = "http://localhost:8888/chat"
-        payload = {"query": self._query_field.get_value()}
-        response = requests.post(url, json=payload)
-        response_list = json.loads(response.json())
-        arg = response_list[0]["arguments"]
-
+        # url = "http://localhost:8888/chat"
+        # payload = {"query": self._query_field.get_value()}
+        # response = requests.post(url, json=payload)
+        # response_list = json.loads(response.json())
+        # arg = response_list[0]["arguments"]
+        arg = {}
         self._packing_script.receive_deliver_order(arg)
 
 
