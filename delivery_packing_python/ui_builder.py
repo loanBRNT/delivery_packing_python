@@ -198,8 +198,9 @@ class UIBuilder:
         Args:
             step (float): The dt of the current physics step
         """
-        done = self._packing_script.update(step)
-        # self._delivering_script.update(step)
+        # done = self._packing_script.update(step)
+        self._delivering_script.update(step)
+        done = False
         if done:
             self._scenario_state_btn.enabled = False
 

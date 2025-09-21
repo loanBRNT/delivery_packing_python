@@ -1,0 +1,1347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot name="a2d_move">
+  <joint name="joint_body_pitch" type="revolute">
+    <origin xyz="0.131 0. 0. " rpy="-1.5871902 1.5707927 -0.0163902"/>
+    <parent link="A2D_link_up_down_body"/>
+    <child link="A2D_link_pitch_body"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="0." upper="1.5699999" effort="1000." velocity="2.6099999"/>
+  </joint>
+  <joint name="joint_head_pitch" type="revolute">
+    <origin xyz="-0.050238 0. 0.060065" rpy="1.5708 0. 0. "/>
+    <parent link="A2D_link_yaw_head"/>
+    <child link="A2D_link_pitch_head"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-0.785398" upper="0.785398" effort="50." velocity="0.9999999"/>
+  </joint>
+  <joint name="joint_head_yaw" type="revolute">
+    <origin xyz="-0.441 -0. 0. " rpy="-1.5707927 -0.0000001 1.5707927"/>
+    <parent link="A2D_link_pitch_body"/>
+    <child link="A2D_link_yaw_head"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-1.5707999" upper="1.5707999" effort="50." velocity="0.9999999"/>
+  </joint>
+  <joint name="joint_lift_body" type="prismatic">
+    <origin xyz="0. 0. 0.6485" rpy="0. 0. 0."/>
+    <parent link="A2D"/>
+    <child link="A2D_link_up_down_body"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="0." upper="0.5" effort="1000." velocity="2.6099999"/>
+  </joint>
+  <joint name="left_Left_0_Joint" type="revolute">
+    <origin xyz="-0.01946 0.0129001 -0. " rpy="-3.1415923 -0. 3.1415927"/>
+    <parent link="left_Left_01_Link"/>
+    <child link="left_Left_00_Link"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-0.9999999" upper="0.9999999" effort="10." velocity="9.9999995"/>
+  </joint>
+  <joint name="left_Left_2_Joint" type="continuous">
+    <origin xyz="-0.017 -0.0000001 0.122 " rpy="1.5707933 -0. 0.0000072"/>
+    <parent link="A2D_Link7_l"/>
+    <child link="left_Left_2_Link"/>
+    <axis xyz="0. 0. 1."/>
+  </joint>
+  <joint name="left_Left_Support_Joint" type="revolute">
+    <origin xyz="0.0093594 0.0562291 -0. " rpy="-3.1415923 -0. 3.1415927"/>
+    <parent link="left_Left_01_Link"/>
+    <child link="left_Left_Support_Link"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-0.2" upper="1.1999999" effort="10000000." velocity="17453.2925199"/>
+  </joint>
+  <joint name="left_Right_0_Joint" type="revolute">
+    <origin xyz="0.0194601 0.0128999 0.0000002" rpy="-3.141585 0.0000144 3.1415854"/>
+    <parent link="left_Right_01_Link"/>
+    <child link="left_Right_00_Link"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="0." upper="0.9999999" effort="2." velocity="999.9999621"/>
+  </joint>
+  <joint name="left_Right_1_Joint" type="continuous">
+    <origin xyz="0.032553 -0. 0.10644 " rpy="1.5708005 0. -0. "/>
+    <parent link="A2D_Link7_l"/>
+    <child link="left_Right_01_Link"/>
+    <axis xyz="0. 0. 1."/>
+  </joint>
+  <joint name="left_Right_2_Joint" type="continuous">
+    <origin xyz="0.017 -0.0000001 0.122 " rpy="1.5708005 0. -0. "/>
+    <parent link="A2D_Link7_l"/>
+    <child link="left_Right_2_Link"/>
+    <axis xyz="0. 0. 1."/>
+  </joint>
+  <joint name="left_Right_Support_Joint" type="continuous">
+    <origin xyz="-0.009359 0.0562291 -0.0000006" rpy="-0.0000076 -0.0000144 -0.0000074"/>
+    <parent link="left_Right_01_Link"/>
+    <child link="left_Right_Support_Link"/>
+    <axis xyz="0. 0. 1."/>
+  </joint>
+  <joint name="left_arm_joint1" type="revolute">
+    <origin xyz="-0.3049986 0. 0.213 " rpy="0. 0.0000001 1.5708001"/>
+    <parent link="A2D_link_pitch_body"/>
+    <child link="A2D_Link1_l"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-3.1399998" upper="3.1399998" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="left_arm_joint2" type="revolute">
+    <origin xyz="-0. 0. 0." rpy="1.5708 -0.0000002 1.5708 "/>
+    <parent link="A2D_Link1_l"/>
+    <child link="A2D_Link2_l"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-2.3561945" upper="2.3561945" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="left_arm_joint3" type="revolute">
+    <origin xyz="0.0000001 0.305 -0. " rpy="1.5621434 1.5707932 3.1329432"/>
+    <parent link="A2D_Link2_l"/>
+    <child link="A2D_Link3_l"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-3.1399998" upper="3.1399998" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="left_arm_joint4" type="revolute">
+    <origin xyz="-0. -0. 0.0000002" rpy="1.5708 -0. 0.0000003"/>
+    <parent link="A2D_Link3_l"/>
+    <child link="A2D_Link4_l"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-2.3561945" upper="2.3561945" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="left_arm_joint5" type="revolute">
+    <origin xyz="0. 0.1975 -0. " rpy="-1.5707928 0. 0.0000072"/>
+    <parent link="A2D_Link4_l"/>
+    <child link="A2D_Link5_l"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-3.1399998" upper="3.1399998" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="left_arm_joint6" type="revolute">
+    <origin xyz="0. -0. 0.0000002" rpy="-1.5707922 -0. 0.0000072"/>
+    <parent link="A2D_Link5_l"/>
+    <child link="A2D_Link6_l"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-2.3561945" upper="2.3561945" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="left_arm_joint7" type="revolute">
+    <origin xyz="0. -0.181 0.0000001" rpy="1.5707921 -0. 0.0000072"/>
+    <parent link="A2D_Link6_l"/>
+    <child link="A2D_Link7_l"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-6.2799996" upper="6.2799996" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="left_hand_joint1" type="revolute">
+    <origin xyz="-0.032553 -0. 0.10644 " rpy="1.5707933 -0. 0.0000072"/>
+    <parent link="A2D_Link7_l"/>
+    <child link="left_Left_01_Link"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="0." upper="0.9999999" effort="2." velocity="999.9999621"/>
+  </joint>
+  <joint name="left_wheel_d" type="continuous">
+    <origin xyz="-0.2691481 0.2755405 0.0784538" rpy="0. 0. 0."/>
+    <parent link="A2D"/>
+    <child link="left_wheel_link_d"/>
+    <axis xyz="0. 1. 0."/>
+  </joint>
+  <joint name="left_wheel_f" type="continuous">
+    <origin xyz="0.3423535 0.2755405 0.0784538" rpy="0. 0. 0."/>
+    <parent link="A2D"/>
+    <child link="left_wheel_link_f"/>
+    <axis xyz="0. 1. 0."/>
+  </joint>
+  <joint name="right_Left_0_Joint" type="revolute">
+    <origin xyz="-0.01946 0.0129001 0.0000001" rpy="0. -0. -0."/>
+    <parent link="right_Left_01_Link"/>
+    <child link="right_Left_00_Link"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="0." upper="0.9999999" effort="2." velocity="999.9999621"/>
+  </joint>
+  <joint name="right_Left_2_Joint" type="continuous">
+    <origin xyz="-0.0170022 -0.0000022 0.1220001" rpy="1.5708 -0.0000073 0.0000048"/>
+    <parent link="A2D_Link7_r"/>
+    <child link="right_Left_2_Link"/>
+    <axis xyz="0. 0. 1."/>
+  </joint>
+  <joint name="right_Left_Support_Joint" type="revolute">
+    <origin xyz="0.02888 0.04341 0. " rpy="-3.1415927 0. -3.1415927"/>
+    <parent link="right_Left_00_Link"/>
+    <child link="right_Left_Support_Link"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-0.2" upper="1.1999999" effort="10000000." velocity="17453.2925199"/>
+  </joint>
+  <joint name="right_Right_0_Joint" type="revolute">
+    <origin xyz="0.01946 0.0129001 0.0000001" rpy="0. -0. 0."/>
+    <parent link="right_Right_01_Link"/>
+    <child link="right_Right_00_Link"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-0.9999999" upper="0.9999999" effort="10." velocity="9.9999995"/>
+  </joint>
+  <joint name="right_Right_1_Joint" type="continuous">
+    <origin xyz="0.0325509 -0.0000022 0.1064405" rpy="1.5708072 -0.0000073 -0.0000024"/>
+    <parent link="A2D_Link7_r"/>
+    <child link="right_Right_01_Link"/>
+    <axis xyz="0. 0. 1."/>
+  </joint>
+  <joint name="right_Right_2_Joint" type="continuous">
+    <origin xyz="0.0169978 -0.0000022 0.1220004" rpy="1.5708072 -0.0000073 -0.0000024"/>
+    <parent link="A2D_Link7_r"/>
+    <child link="right_Right_2_Link"/>
+    <axis xyz="0. 0. 1."/>
+  </joint>
+  <joint name="right_Right_Support_Joint" type="continuous">
+    <origin xyz="-0.02888 0.04341 -0. " rpy="0. 0. 0."/>
+    <parent link="right_Right_00_Link"/>
+    <child link="right_Right_Support_Link"/>
+    <axis xyz="0. 0. 1."/>
+  </joint>
+  <joint name="right_arm_joint1" type="revolute">
+    <origin xyz="-0.3050015 -0. -0.213 " rpy="3.1415927 -0.0000001 -1.5707903"/>
+    <parent link="A2D_link_pitch_body"/>
+    <child link="A2D_Link1_r"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-3.1399998" upper="3.1399998" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="right_arm_joint2" type="revolute">
+    <origin xyz="0. 0. 0." rpy="-1.5708001 -0.0000001 1.5708 "/>
+    <parent link="A2D_Link1_r"/>
+    <child link="A2D_Link2_r"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-2.3561945" upper="2.3561945" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="right_arm_joint3" type="revolute">
+    <origin xyz="-0. -0.305 0. " rpy="1.5860149 -1.570793 -0.0152149"/>
+    <parent link="A2D_Link2_r"/>
+    <child link="A2D_Link3_r"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-3.1399998" upper="3.1399998" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="right_arm_joint4" type="revolute">
+    <origin xyz="0. 0. 0.0000002" rpy="1.5707927 -0. -0.0000075"/>
+    <parent link="A2D_Link3_r"/>
+    <child link="A2D_Link4_r"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-2.3561945" upper="2.3561945" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="right_arm_joint5" type="revolute">
+    <origin xyz="0. 0.1975 0. " rpy="-1.5707927 0. 0.0000072"/>
+    <parent link="A2D_Link4_r"/>
+    <child link="A2D_Link5_r"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-3.1399998" upper="3.1399998" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="right_arm_joint6" type="revolute">
+    <origin xyz="0. 0. -0." rpy="-1.5707927 0. 0.0000072"/>
+    <parent link="A2D_Link5_r"/>
+    <child link="A2D_Link6_r"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-2.3561945" upper="2.3561945" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="right_arm_joint7" type="revolute">
+    <origin xyz="0.0000013 -0.181 0.0000013" rpy="1.5707854 -0.0000024 0.0000001"/>
+    <parent link="A2D_Link6_r"/>
+    <child link="A2D_Link7_r"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="-3.1399998" upper="3.1399998" effort="3000." velocity="3.1399998"/>
+  </joint>
+  <joint name="right_hand_joint1" type="revolute">
+    <origin xyz="-0.0325551 -0.000002 0.10644 " rpy="1.5708 -0.0000073 0.0000048"/>
+    <parent link="A2D_Link7_r"/>
+    <child link="right_Left_01_Link"/>
+    <axis xyz="0. 0. 1."/>
+    <limit lower="0." upper="0.9999999" effort="2." velocity="999.9999621"/>
+  </joint>
+  <joint name="right_wheel_d" type="continuous">
+    <origin xyz="-0.26915 -0.2820912 0.0784538" rpy="0. 0. 0."/>
+    <parent link="A2D"/>
+    <child link="right_wheel_link_d"/>
+    <axis xyz="0. 1. 0."/>
+  </joint>
+  <joint name="right_wheel_f" type="continuous">
+    <origin xyz="0.34235 -0.2820912 0.0784538" rpy="0. 0. 0."/>
+    <parent link="A2D"/>
+    <child link="right_wheel_link_f"/>
+    <axis xyz="0. 1. 0."/>
+  </joint>
+  <link name="A2D">
+    <visual>
+      <origin xyz="0. 0. 0." rpy="1.5707872 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_base_link_visuals_base_link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="1.5707872 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_base_link_collisions_base_link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="1.5707872 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_base_link_collisions_base_link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link1_l">
+    <inertial>
+      <origin xyz="-0.0014596 0.0004948 0.017089 " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0006189" ixy="-0.0000067" ixz="0.0000035" iyy="0.0005491" iyz="0.0000012" izz="0.0002666"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="3.1415925 -0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link1_l_visuals_Link1_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="3.1415925 -0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link1_l_collisions_Link1_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. 0. 0." rpy="3.1415925 -0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link1_l_collisions_Link1_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link1_r">
+    <inertial>
+      <origin xyz="0.0013193 0.000161 0.018211 " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.000726" ixy="0.0000024" ixz="-0.0000078" iyy="0.0006669" iyz="0.0000012" izz="0.0002843"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="-3.1415927 0.0000001 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link1_r_visuals_Link1_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="-3.1415927 0.0000001 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link1_r_collisions_Link1_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="-3.1415927 0.0000001 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link1_r_collisions_Link1_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link2_l">
+    <inertial>
+      <origin xyz="-0.0004301 0.088101 -0.0065021" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.000331" ixy="-0.0000041" ixz="0.000001" iyy="0.000221" iyz="-0.000048" izz="0.0003147"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="-3.1415925 0.0000005 3.1415925"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link2_l_visuals_Link2_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="-3.1415925 0.0000005 3.1415925"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link2_l_collisions_Link2_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="-3.1415925 0.0000005 3.1415925"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link2_l_collisions_Link2_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link2_r">
+    <inertial>
+      <origin xyz="0.0001204 -0.088102 -0.0062668" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0003325" ixy="-0.0000012" ixz="-0.0000005" iyy="0.000221" iyz="0.0000458" izz="0.0003132"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="-3.1415927 0.0000003 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link2_r_visuals_Link2_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="-3.1415927 0.0000003 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link2_r_collisions_Link2_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="-3.1415927 0.0000003 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link2_r_collisions_Link2_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link3_l">
+    <inertial>
+      <origin xyz="0.0002259 0.0010417 0.034985 " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0008106" ixy="-0.0000024" ixz="0.0000009" iyy="0.0008334" iyz="0.0000039" izz="0.0001713"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. -0. 0.0000002" rpy="-3.1415925 0. -3.1415923"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link3_l_visuals_Link3_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. -0. 0.0000002" rpy="-3.1415925 0. -3.1415923"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link3_l_collisions_Link3_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. -0. 0.0000002" rpy="-3.1415925 0. -3.1415923"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link3_l_collisions_Link3_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link3_r">
+    <inertial>
+      <origin xyz="-0.0000038 -0.0001255 -0.035846 " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0008496" ixy="-0." ixz="0." iyy="0.0008265" iyz="0.0000003" izz="0.0002114"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0.0000002" rpy="-0. -0. -0.0000003"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link3_r_visuals_Link3_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0.0000002" rpy="-0. -0. -0.0000003"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link3_r_collisions_Link3_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0.0000002" rpy="-0. -0. -0.0000003"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link3_r_collisions_Link3_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link4_l">
+    <inertial>
+      <origin xyz="0.0000022 0.071943 -0.0054645" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001434" ixy="-0." ixz="-0." iyy="0.0000904" iyz="-0.0000219" izz="0.0001381"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="-3.1415925 -0. -3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link4_l_visuals_Link4_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="-3.1415925 -0. -3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link4_l_collisions_Link4_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="-3.1415925 -0. -3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link4_l_collisions_Link4_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link4_r">
+    <inertial>
+      <origin xyz="0.0000019 0.071943 -0.0054646" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001434" ixy="-0." ixz="-0." iyy="0.0000904" iyz="-0.0000219" izz="0.0001381"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="3.1415927 0. -3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link4_r_visuals_Link4_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="3.1415927 0. -3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link4_r_collisions_Link4_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="3.1415927 0. -3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link4_r_collisions_Link4_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link5_l">
+    <inertial>
+      <origin xyz="-0.0000008 -0.0000678 -0.012879 " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001284" ixy="0." ixz="0." iyy="0.0001374" iyz="0.0000003" izz="0.0000621"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. -0. 0.0000002" rpy="0.0000005 0. -0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link5_l_visuals_Link5_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. -0. 0.0000002" rpy="0.0000005 0. -0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link5_l_collisions_Link5_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. -0. 0.0000002" rpy="0.0000005 0. -0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link5_l_collisions_Link5_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link5_r">
+    <inertial>
+      <origin xyz="0.000004 -0.0000678 -0.012877 " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001284" ixy="-0." ixz="0." iyy="0.0001374" iyz="0.0000003" izz="0.0000621"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. -0." rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link5_r_visuals_Link5_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. -0." rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link5_r_collisions_Link5_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. -0." rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link5_r_collisions_Link5_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link6_l">
+    <inertial>
+      <origin xyz="0.0000023 -0.10227 -0.0029117" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001376" ixy="0." ixz="0." iyy="0.0000808" iyz="0.0000202" izz="0.0001281"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="-3.141592 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link6_l_visuals_Link6_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="-3.141592 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link6_l_collisions_Link6_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="-3.141592 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link6_l_collisions_Link6_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link6_r">
+    <inertial>
+      <origin xyz="-0.0000025 -0.10227 -0.0029098" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001376" ixy="-0." ixz="0." iyy="0.0000808" iyz="0.0000202" izz="0.0001281"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="-3.1415854 0.0000024 -3.1415854"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link6_r_visuals_Link6_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="-3.1415854 0.0000024 -3.1415854"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link6_r_collisions_Link6_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="-3.1415854 0.0000024 -3.1415854"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link6_r_collisions_Link6_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link7_l">
+    <inertial>
+      <origin xyz="-0.0000302 0.0000014 0.044977 " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0009314" ixy="-0.0000002" ixz="-0.0000009" iyy="0.0009596" iyz="0.0000001" izz="0.0003075"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="0.0000006 0. -0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link7_l_visuals_Link7_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="0.0000006 0. -0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link7_l_visuals_base_link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="0.0000006 0. -0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link7_l_collisions_Link7_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="0.0000006 0. -0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link7_l_collisions_base_link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. 0. 0." rpy="0.0000006 0. -0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link7_l_collisions_Link7_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0. 0. 0." rpy="0.0000006 0. -0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link7_l_collisions_base_link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_Link7_r">
+    <inertial>
+      <origin xyz="0.0000287 0.000015 0.044977 " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0009315" ixy="-0.0000003" ixz="0.0000008" iyy="0.0009594" iyz="0.0000004" izz="0.0003075"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.0000013 -0.0000013 0.0000002" rpy="0.0000072 -0.0000073 -0.0000024"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link7_r_visuals_Link7_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.0000013 -0.0000013 0.0000002" rpy="0.0000072 -0.0000073 -0.0000024"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link7_r_visuals_base_link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.0000013 -0.0000013 0.0000002" rpy="0.0000072 -0.0000073 -0.0000024"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link7_r_collisions_Link7_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.0000013 -0.0000013 0.0000002" rpy="0.0000072 -0.0000073 -0.0000024"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link7_r_collisions_base_link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.0000013 -0.0000013 0.0000002" rpy="0.0000072 -0.0000073 -0.0000024"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link7_r_collisions_Link7_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0.0000013 -0.0000013 0.0000002" rpy="0.0000072 -0.0000073 -0.0000024"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_Link7_r_collisions_base_link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_link_pitch_body">
+    <inertial>
+      <origin xyz="0.203885 -0.0004402 -0.0011276" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0196813" ixy="0.0002374" ixz="0.0009327" iyy="0.0562359" iyz="-0.0002416" izz="0.0493992"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="1.5707847 -0. -3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_pitch_body_visuals_link_pitch_body_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.3049999 -0. 0.025 " rpy="-0.0000073 -0.0000001 -1.5707926"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_pitch_body_visuals_base_link_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.3050001 -0. -0.025 " rpy="-3.1415854 0.0000001 1.5708026"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_pitch_body_visuals_base_link_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="1.5707847 -0. -3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_pitch_body_collisions_link_pitch_body_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.3049999 -0. 0.025 " rpy="-0.0000073 -0.0000001 -1.5707926"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_pitch_body_collisions_base_link_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.3050001 -0. -0.025 " rpy="-3.1415854 0.0000001 1.5708026"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_pitch_body_collisions_base_link_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="1.5707847 -0. -3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_pitch_body_collisions_link_pitch_body_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0.3049999 -0. 0.025 " rpy="-0.0000073 -0.0000001 -1.5707926"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_pitch_body_collisions_base_link_l_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0.3050001 -0. -0.025 " rpy="-3.1415854 0.0000001 1.5708026"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_pitch_body_collisions_base_link_r_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_link_pitch_head">
+    <inertial>
+      <origin xyz="0.0257009 0.0316254 -0.0000377" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0020541" ixy="0.0003477" ixz="-0.0000021" iyy="0.0020036" iyz="0.0000001" izz="0.00185"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="-1.5708054 0.0000025 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_pitch_head_visuals_link_pitch_head_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="-1.5708054 0.0000025 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_pitch_head_collisions_link_pitch_head_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. 0. 0." rpy="-1.5708054 0.0000025 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_pitch_head_collisions_link_pitch_head_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_link_up_down_body">
+    <inertial>
+      <origin xyz="0.0338352 -0.0024804 0.0008384" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0128302" ixy="0.0000082" ixz="0.0000138" iyy="0.0061041" iyz="-0.000008" izz="0.0111721"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="1.5707872 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_up_down_body_visuals_link_up_down_body_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="1.5707872 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_up_down_body_collisions_link_up_down_body_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="1.5707872 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_up_down_body_collisions_link_up_down_body_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="A2D_link_yaw_head">
+    <inertial>
+      <origin xyz="0.0446068 0.0024175 0.0528374" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001587" ixy="-0.000001" ixz="-0.0000066" iyy="0.0001177" iyz="-0.0000027" izz="0.0001709"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="0. -0. 3.14159"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_yaw_head_visuals_link_yaw_head_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="0. -0. 3.14159"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_yaw_head_collisions_link_yaw_head_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. 0. 0." rpy="0. -0. 3.14159"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/A2D_link_yaw_head_collisions_link_yaw_head_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_Left_00_Link">
+    <inertial>
+      <origin xyz="0.0065639 0.0248503 -0. " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.000002" ixy="0.0000006" ixz="0." iyy="0.0000014" iyz="0." izz="0.0000025"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_00_Link_visuals_Left_00_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_00_Link_collisions_Left_00_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_00_Link_collisions_Left_00_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_Left_01_Link">
+    <inertial>
+      <origin xyz="0.0065639 0.0248503 -0. " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.000002" ixy="0.0000006" ixz="0." iyy="0.0000014" iyz="0." izz="0.0000025"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. 0.0000001 -0. " rpy="-3.1415923 -0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_01_Link_visuals_Left_01_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0.0000001 -0. " rpy="-3.1415923 -0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_01_Link_collisions_Left_01_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. 0.0000001 -0. " rpy="-3.1415923 -0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_01_Link_collisions_Left_01_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_Left_2_Link">
+    <inertial>
+      <origin xyz="-0.0043895 0.0248816 -0.0000255" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0000012" ixy="0.0000001" ixz="-0." iyy="0.0000005" iyz="-0." izz="0.0000008"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. 0.0000001 -0. " rpy="-3.1415923 -0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_2_Link_visuals_Left_2_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0.0000001 -0. " rpy="-3.1415923 -0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_2_Link_collisions_Left_2_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. 0.0000001 -0. " rpy="-3.1415923 -0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_2_Link_collisions_Left_2_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_Left_Support_Link">
+    <inertial>
+      <origin xyz="-0.0139043 0.0281607 -0.0000011" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0000061" ixy="0.0000016" ixz="0." iyy="0.0000016" iyz="-0." izz="0.0000062"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_Support_Link_visuals_Left_Support_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.022056 0.044306 0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_Support_Link_visuals_Left_Pad_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_Support_Link_collisions_Left_Support_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.022056 0.044306 0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_Support_Link_collisions_Left_Pad_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. 0. 0." rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_Support_Link_collisions_Left_Support_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0.022056 0.044306 0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Left_Support_Link_collisions_Left_Pad_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_Right_00_Link">
+    <inertial>
+      <origin xyz="0.0065639 0.0248503 -0. " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.000002" ixy="0.0000006" ixz="0." iyy="0.0000014" iyz="0." izz="0.0000025"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.0000001 0.0000001 0.0000002" rpy="3.1415927 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_00_Link_visuals_Right_00_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0.0000001 0.0000001 0.0000002" rpy="3.1415927 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_00_Link_collisions_Right_00_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.0000001 0.0000001 0.0000002" rpy="3.1415927 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_00_Link_collisions_Right_00_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_Right_01_Link">
+    <inertial>
+      <origin xyz="0.0065639 0.0248503 -0. " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.000002" ixy="0.0000006" ixz="0." iyy="0.0000014" iyz="0." izz="0.0000025"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0.0000001 -0. " rpy="-0.0000076 -0.0000144 -0.0000074"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_01_Link_visuals_Right_01_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0.0000001 -0. " rpy="-0.0000076 -0.0000144 -0.0000074"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_01_Link_collisions_Right_01_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0.0000001 -0. " rpy="-0.0000076 -0.0000144 -0.0000074"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_01_Link_collisions_Right_01_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_Right_2_Link">
+    <inertial>
+      <origin xyz="-0.0043895 0.0248816 -0.0000255" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0000012" ixy="0.0000001" ixz="-0." iyy="0.0000005" iyz="-0." izz="0.0000008"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0.0000001 -0. " rpy="-0.0000076 -0.0000144 -0.0000074"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_2_Link_visuals_Right_2_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0.0000001 -0. " rpy="-0.0000076 -0.0000144 -0.0000074"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_2_Link_collisions_Right_2_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0.0000001 -0. " rpy="-0.0000076 -0.0000144 -0.0000074"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_2_Link_collisions_Right_2_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_Right_Support_Link">
+    <inertial>
+      <origin xyz="-0.0139043 0.0281607 -0.0000011" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0000061" ixy="0.0000016" ixz="0." iyy="0.0000016" iyz="-0." izz="0.0000062"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.0000004 -0. 0.0000005" rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_Support_Link_visuals_Right_Support_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.0220564 0.044306 0.0000005" rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_Support_Link_visuals_Right_Pad_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.0000004 -0. 0.0000005" rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_Support_Link_collisions_Right_Support_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.0220564 0.044306 0.0000005" rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_Support_Link_collisions_Right_Pad_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.0000004 -0. 0.0000005" rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_Support_Link_collisions_Right_Support_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0.0220564 0.044306 0.0000005" rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_Right_Support_Link_collisions_Right_Pad_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_wheel_link_d">
+    <inertial>
+      <origin xyz="0. -0.0313726 0. " rpy="0. 0. 0."/>
+      <mass value="1."/>
+      <inertia ixx="0.001" ixy="0." ixz="0." iyy="0.001" iyz="0." izz="0.001"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. -0.0313726 0. " rpy="1.5707964 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_wheel_link_d_Cylinder.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. -0.0313726 0. " rpy="1.5707964 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_wheel_link_d_Cylinder.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_wheel_link_f">
+    <inertial>
+      <origin xyz="0. -0.0313726 0. " rpy="0. 0. 0."/>
+      <mass value="1."/>
+      <inertia ixx="0.001" ixy="0." ixz="0." iyy="0.001" iyz="0." izz="0.001"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. -0.0313726 0. " rpy="1.5707964 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_wheel_link_f_Cylinder.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. -0.0313726 0. " rpy="1.5707964 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/left_wheel_link_f_Cylinder.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_Left_00_Link">
+    <inertial>
+      <origin xyz="0.0065639 0.0248503 -0. " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.000002" ixy="0.0000006" ixz="0." iyy="0.0000014" iyz="0." izz="0.0000025"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="3.1415927 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_00_Link_visuals_Left_00_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="3.1415927 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_00_Link_collisions_Left_00_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. 0. 0." rpy="3.1415927 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_00_Link_collisions_Left_00_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_Left_01_Link">
+    <inertial>
+      <origin xyz="0.0065639 0.0248503 -0. " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.000002" ixy="0.0000006" ixz="0." iyy="0.0000014" iyz="0." izz="0.0000025"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. 0.0000001 0.0000001" rpy="3.1415927 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_01_Link_visuals_Left_01_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0.0000001 0.0000001" rpy="3.1415927 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_01_Link_collisions_Left_01_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. 0.0000001 0.0000001" rpy="3.1415927 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_01_Link_collisions_Left_01_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_Left_2_Link">
+    <inertial>
+      <origin xyz="-0.0043895 0.0248816 -0.0000255" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0000012" ixy="0.0000001" ixz="-0." iyy="0.0000005" iyz="-0." izz="0.0000008"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. 0.0000001 0.0000001" rpy="3.1415927 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_2_Link_visuals_Left_2_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0.0000001 0.0000001" rpy="3.1415927 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_2_Link_collisions_Left_2_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. 0.0000001 0.0000001" rpy="3.1415927 0. 3.1415927"/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_2_Link_collisions_Left_2_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_Left_Support_Link">
+    <inertial>
+      <origin xyz="-0.0139043 0.0281607 -0.0000011" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0000061" ixy="0.0000016" ixz="0." iyy="0.0000016" iyz="-0." izz="0.0000062"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.0000001 0. -0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_Support_Link_visuals_Left_Support_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.0220561 0.044306 -0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_Support_Link_visuals_Left_Pad_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.0000001 0. -0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_Support_Link_collisions_Left_Support_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.0220561 0.044306 -0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_Support_Link_collisions_Left_Pad_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.0000001 0. -0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_Support_Link_collisions_Left_Support_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0.0220561 0.044306 -0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Left_Support_Link_collisions_Left_Pad_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_Right_00_Link">
+    <inertial>
+      <origin xyz="0.0065639 0.0248503 -0. " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.000002" ixy="0.0000006" ixz="0." iyy="0.0000014" iyz="0." izz="0.0000025"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. -0.0000001 -0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_00_Link_visuals_Right_00_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. -0.0000001 -0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_00_Link_collisions_Right_00_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. -0.0000001 -0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_00_Link_collisions_Right_00_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_Right_01_Link">
+    <inertial>
+      <origin xyz="0.0065639 0.0248503 -0. " rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.000002" ixy="0.0000006" ixz="0." iyy="0.0000014" iyz="0." izz="0.0000025"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0.0000001 0.0000001" rpy="0. -0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_01_Link_visuals_Right_01_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0.0000001 0.0000001" rpy="0. -0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_01_Link_collisions_Right_01_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0.0000001 0.0000001" rpy="0. -0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_01_Link_collisions_Right_01_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_Right_2_Link">
+    <inertial>
+      <origin xyz="-0.0043895 0.0248816 -0.0000255" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0000012" ixy="0.0000001" ixz="-0." iyy="0.0000005" iyz="-0." izz="0.0000008"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. 0.0000001 0.0000001" rpy="0. -0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_2_Link_visuals_Right_2_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0. 0.0000001 0.0000001" rpy="0. -0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_2_Link_collisions_Right_2_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. 0.0000001 0.0000001" rpy="0. -0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_2_Link_collisions_Right_2_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_Right_Support_Link">
+    <inertial>
+      <origin xyz="-0.0139043 0.0281607 -0.0000011" rpy="0. 0. 0."/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0000061" ixy="0.0000016" ixz="0." iyy="0.0000016" iyz="-0." izz="0.0000062"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_Support_Link_visuals_Right_Support_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.022056 0.044306 0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_Support_Link_visuals_Right_Pad_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_Support_Link_collisions_Right_Support_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="-0.022056 0.044306 0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_Support_Link_collisions_Right_Pad_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_Support_Link_collisions_Right_Support_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0.022056 0.044306 0. " rpy="0. 0. 0."/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_Right_Support_Link_collisions_Right_Pad_Link_mesh.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_wheel_link_d">
+    <inertial>
+      <origin xyz="0.0000766 -0. -0.0000411" rpy="0. 0. 0."/>
+      <mass value="1."/>
+      <inertia ixx="0.0057995" ixy="0." ixz="-0.0000054" iyy="0.0111895" iyz="0." izz="0.0058067"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0. 0. 0." rpy="1.5707964 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_wheel_link_d_Cylinder.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0. 0. 0." rpy="1.5707964 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_wheel_link_d_Cylinder.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_wheel_link_f">
+    <inertial>
+      <origin xyz="0. 0. 0." rpy="0. 0. 0."/>
+      <mass value="1."/>
+      <inertia ixx="0.001" ixy="0." ixz="0." iyy="0.001" iyz="0." izz="0.001"/>
+    </inertial>
+    <visual>
+      <origin xyz="0. 0. 0." rpy="1.5707964 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_wheel_link_f_Cylinder.obj" scale="1. 1. 1."/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0. 0. 0." rpy="1.5707964 0. 0. "/>
+      <geometry>
+        <mesh filename="file:///home/loan/isaacsim/extsUser/delivery_packing_python/assets/a2d/meshes/right_wheel_link_f_Cylinder.obj" scale="1. 1. 1."/>
+      </geometry>
+    </collision>
+  </link>
+</robot>
