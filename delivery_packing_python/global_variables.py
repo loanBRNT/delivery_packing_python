@@ -16,3 +16,5 @@
 EXTENSION_TITLE = "delivery_packing"
 
 EXTENSION_DESCRIPTION = ""
+
+state_machine_id = 0

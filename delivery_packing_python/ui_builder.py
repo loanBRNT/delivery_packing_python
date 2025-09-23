@@ -7,7 +7,7 @@ from isaacsim.core.api.world import World
 from isaacsim.core.prims import SingleXFormPrim
 from isaacsim.core.utils.stage import create_new_stage, get_current_stage
 from isaacsim.examples.extension.core_connectors import LoadButton, ResetButton
-from isaacsim.gui.components.element_wrappers import CollapsableFrame, StateButton, StringField
+from isaacsim.gui.components.element_wrappers import CollapsableFrame, StateButton, StringField, DropDown
 from isaacsim.gui.components.ui_utils import get_style
 from omni.usd import StageEventType
 from pxr import Sdf, UsdLux
@@ -82,6 +82,9 @@ class UIBuilder:
         for ui_elem in self.wrapped_ui_elements:
             ui_elem.cleanup()
 
+    def get_items(self):
+        return ["bedroom1", "bedroom2", "bedroom3"]
+
     def build_ui(self):
         """
         Build a custom UI tool to run your extension.
@@ -94,7 +97,7 @@ class UIBuilder:
                 self._load_btn = LoadButton(
                     "Load Button", "LOAD", setup_scene_fn=self._setup_scene, setup_post_load_fn=self._setup_scenario
                 )
-                self._load_btn.set_world_settings(physics_dt=1 / 60.0, rendering_dt=1 / 60.0)
+                self._load_btn.set_world_settings(physics_dt=1 / 120.0, rendering_dt=1 / 60.0)
                 self.wrapped_ui_elements.append(self._load_btn)
 
                 self._reset_btn = ResetButton(
@@ -112,6 +115,11 @@ class UIBuilder:
                     default_value="Hello, can I have 3 red cubes please?",
                     multiline_okay=True
                 )
+                self._bedroom_selector = DropDown(
+                    label="Select here from which room you are ordering",
+                    populate_fn=self.get_items,
+                )
+                self._bedroom_selector.repopulate()
                 self._scenario_state_btn = StateButton(
                     "Run Scenario",
                     "RUN",
@@ -128,8 +136,6 @@ class UIBuilder:
     ######################################################################################
 
     def _on_init(self):
-        self._articulation = None
-        self._cuboid = None
         self._packing_script = PackingScript()
         self._delivering_script = DeliveringScript()
 
@@ -198,8 +204,8 @@ class UIBuilder:
         Args:
             step (float): The dt of the current physics step
         """
-        done = self._packing_script.update(step)
-        # self._delivering_script.update(step)
+        self._packing_script.update(step)
+        done = self._delivering_script.update(step)
         if done:
             self._scenario_state_btn.enabled = False
 
@@ -213,13 +219,18 @@ class UIBuilder:
         the timeline is paused, which means that no physics steps will occur until the user makes it play either programmatically or
         through the left-hand UI toolbar.
         """
+        bedroom = self._bedroom_selector.get_selection()
+        if not bedroom:
+            raise ValueError("You must select a bedroom")
         # url = "http://localhost:8888/chat"
         # payload = {"query": self._query_field.get_value()}
         # response = requests.post(url, json=payload)
         # response_list = json.loads(response.json())
         # arg = response_list[0]["arguments"]
-        arg = {}
-        self._packing_script.receive_deliver_order(arg)
+        packing_arg = {}
+        delivering_arg = {"room":bedroom}
+        self._packing_script.receive_deliver_order(packing_arg)
+        self._delivering_script.receive_delvier_order(delivering_arg)
 
 
         self._timeline.play()

@@ -1,0 +1,118 @@
+# The robot description defines the generalized coordinates and how to map those
+# to the underlying URDF dofs.
+
+api_version: 1.0
+
+# Defines the generalized coordinates. Each generalized coordinate is assumed
+# to have an entry in the URDF.
+# Lula will only use these joints to control the robot position.
+cspace:
+    - left_arm_joint1
+    - left_arm_joint2
+    - left_arm_joint3
+    - left_arm_joint4
+    - left_arm_joint5
+    - left_arm_joint6
+    - left_arm_joint7
+default_q: [
+    0.0,0.0,0.0,0.0,-0.0,-0.0,-0.0
+]
+
+acceleration_limits: [
+   2,2,2,2,2,2,2
+]
+
+jerk_limits: [
+   1,1,1,1, 1,1,1
+]
+
+# Most dimensions of the cspace have a direct corresponding element
+# in the URDF. This list of rules defines how unspecified coordinates
+# should be extracted or how values in the URDF should be overwritten.
+
+cspace_to_urdf_rules:
+    - {name: joint_lift_body, rule: fixed, value: 0.0} 
+    - {name: left_wheel_f, rule: fixed, value: -0.0}
+    - {name: right_wheel_f, rule: fixed, value: -0.0}
+    - {name: right_wheel_d, rule: fixed, value: -0.0}
+    - {name: left_wheel_d, rule: fixed, value: -0.0}
+    - {name: joint_body_pitch, rule: fixed, value: -0.0}
+    - {name: joint_head_yaw, rule: fixed, value: 0.0}
+    - {name: joint_head_pitch, rule: fixed, value: 0.0}
+    - {name: right_arm_joint1, rule: fixed, value: -0.0}
+    - {name: right_arm_joint2, rule: fixed, value: 0.0}
+    - {name: right_arm_joint3, rule: fixed, value: 0.0}
+    - {name: right_arm_joint4, rule: fixed, value: -0.0}
+    - {name: right_arm_joint5, rule: fixed, value: -0.0}
+    - {name: right_arm_joint6, rule: fixed, value: 0.0}
+    - {name: right_arm_joint7, rule: fixed, value: 0.0}
+    - {name: left_Left_2_Joint, rule: fixed, value: -0.0}
+    - {name: left_Right_1_Joint, rule: fixed, value: -0.0}
+    - {name: left_Right_2_Joint, rule: fixed, value: 0.0}
+    - {name: left_hand_joint1, rule: fixed, value: 0.0}
+    - {name: right_Left_2_Joint, rule: fixed, value: 0.0}
+    - {name: right_Right_1_Joint, rule: fixed, value: 0.0}
+    - {name: right_Right_2_Joint, rule: fixed, value: -0.0}
+    - {name: right_hand_joint1, rule: fixed, value: -0.0}
+    - {name: left_Right_0_Joint, rule: fixed, value: -0.0}
+    - {name: left_Right_Support_Joint, rule: fixed, value: 0.0}
+    - {name: left_Left_0_Joint, rule: fixed, value: -0.0}
+    - {name: left_Left_Support_Joint, rule: fixed, value: 0.0}
+    - {name: right_Right_0_Joint, rule: fixed, value: -0.0}
+    - {name: right_Left_0_Joint, rule: fixed, value: 0.0}
+    - {name: right_Right_Support_Joint, rule: fixed, value: 0.0}
+    - {name: right_Left_Support_Joint, rule: fixed, value: 0.0}
+
+# Lula uses collision spheres to define the robot geometry in order to avoid
+# collisions with external obstacles.  If no spheres are specified, Lula will
+# not be able to avoid obstacles.
+
+collision_spheres:
+  - base_link:
+    - "center": [-0.0, -0.0, 0.153]
+      "radius": 0.3
+    - "center": [-0.073, -0.0, 0.48]
+      "radius": 0.2
+    - "center": [-0.091, -0.0, 0.71]
+      "radius": 0.2
+    - "center": [-0.087, -0.0, 1.084]
+      "radius": 0.2
+  - link_pitch_body:
+    - "center": [0.07, 0.044, -0.0]
+      "radius": 0.15
+    - "center": [0.26, 0.014, -0.005]
+      "radius": 0.18
+  - Link1_l:
+    - "center": [-0.0, -0.0, 0.021]
+      "radius": 0.1
+  - Link3_l:
+    - "center": [0.0, 0.0, 0.165]
+      "radius": 0.1
+    - "center": [0.0, 0.0, 0.0]
+      "radius": 0.1
+  - Link5_l:
+    - "center": [-0.0, -0.0, -0.027]
+      "radius": 0.1
+  - Link7_l:
+    - "center": [0.0, 0.0, 0.0]
+      "radius": 0.1
+  - Link6_l:
+    - "center": [-0.0, -0.052, -0.0]
+      "radius": 0.1
+  - Link1_r:
+    - "center": [0.0, 0.0, 0.0]
+      "radius": 0.1
+  - Link3_r:
+    - "center": [-0.0, -0.0, -0.173]
+      "radius": 0.1
+    - "center": [0.0, 0.0, 0.0]
+      "radius": 0.1
+  - Link5_r:
+    - "center": [-0.0, -0.0, -0.056]
+      "radius": 0.1
+  - Link6_r:
+    - "center": [-0.0, -0.042, -0.0]
+      "radius": 0.1
+  - Link7_r:
+    - "center": [0.0, 0.0, 0.0]
+      "radius": 0.1

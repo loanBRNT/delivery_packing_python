@@ -22,6 +22,7 @@ import omni.physx as _physx
 import omni.timeline
 import omni.ui as ui
 import omni.usd
+from omni.isaac.core import SimulationContext
 from isaacsim.gui.components.element_wrappers import ScrollingWindow
 from isaacsim.gui.components.menu import MenuItemDescription
 from omni.kit.menu.utils import add_menu_items, remove_menu_items
@@ -158,6 +159,12 @@ class Extension(omni.ext.IExt):
             # stage was opened or closed, cleanup
             self._physx_subscription = None
             self.ui_builder.cleanup()
+
+        if event.type == int(StageEventType.OPENED):
+            stage = self._usd_context.get_stage()
+            physics_scene = stage.GetPrimAtPath("/physicsScene")
+            if physics_scene:
+                physics_scene.GetAttribute("physics:timeStepsPerSecond").Set(120.0)
 
         self.ui_builder.on_stage_event(event)
 
