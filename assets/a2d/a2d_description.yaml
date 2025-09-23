@@ -23,7 +23,7 @@ acceleration_limits: [
 ]
 
 jerk_limits: [
-   100,100,100,100, 100,100,100
+   1,1,1,1, 1,1,1
 ]
 
 # Most dimensions of the cspace have a direct corresponding element

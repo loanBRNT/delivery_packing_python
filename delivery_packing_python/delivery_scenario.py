@@ -16,21 +16,28 @@
 import numpy as np
 import os, math
 
-from isaacsim.core.api.objects import DynamicCuboid, FixedCuboid, GroundPlane, VisualCuboid
+from isaacsim.core.api.objects import FixedCuboid
 from isaacsim.core.prims import SingleArticulation, SingleXFormPrim
-from isaacsim.core.utils import distance_metrics, transformations
+from isaacsim.core.utils import distance_metrics
 from isaacsim.core.utils.numpy.rotations import euler_angles_to_quats, quats_to_rot_matrices, quats_to_euler_angles, rot_matrices_to_quats
 from isaacsim.core.utils.stage import add_reference_to_stage, get_current_stage
 from isaacsim.core.utils.types import ArticulationAction
 from isaacsim.core.utils.viewports import set_camera_view
-from isaacsim.robot.wheeled_robots.controllers.differential_controller import DifferentialController
+from isaacsim.robot.wheeled_robots.controllers.ackermann_controller import AckermannController
 from isaacsim.storage.native import get_assets_root_path
 from isaacsim.robot_motion.motion_generation import ArticulationKinematicsSolver, LulaKinematicsSolver
 
-from pxr import UsdPhysics, Gf
+from . import global_variables
 
 ROBOT_POS = np.array([0.,0.1,0])
 ROBOT_ORI = euler_angles_to_quats(np.array([0.,0.,np.pi]))
+
+
+bedroom_targets = [
+    np.array([3,2]),
+    np.array([1,7]),
+    np.array([-1,5])
+]
 
 class DeliveringScript:
     def __init__(self):
@@ -64,27 +71,6 @@ class DeliveringScript:
             orientation=ROBOT_ORI
         )
 
-        #conveyor
-        conveyor_asset_path = get_assets_root_path() +  "/Isaac/Props/Conveyors/ConveyorBelt_A08.usd"
-        conveyor_prim_path = "/World/Conveyor"
-        add_reference_to_stage(conveyor_asset_path, conveyor_prim_path)
-        self._conveyor =  SingleXFormPrim(
-            prim_path=conveyor_prim_path,
-            name="conveyor",
-            position=np.array([4.0, 0, 0]),
-            # orientation=euler_angles_to_quats([0, 0, np.deg2rad(90)]),
-        )
-
-        shelve_asset_path = os.path.join(self.general_asset_path, "shelve_large","shelve_large.usd")
-        shelve_prim_path = "/World/Shelve2"
-        add_reference_to_stage(shelve_asset_path, shelve_prim_path)
-        self._shelve = SingleXFormPrim(
-            prim_path=shelve_prim_path,
-            name="shelve2",
-            position=np.array([-1.2, 0, 0.75]),
-            scale=np.array([1.0, 1.0, 0.7]),
-        )
-
         #tray
         tray_asset_path = os.path.join(self.general_asset_path,"ikea_tray","ikea_tray.usd")
         tray_prim_path = "/tray1"
@@ -98,10 +84,57 @@ class DeliveringScript:
             scale = np.array([1.5,1.5,1.5])
         )
 
+        #tables
+        table_asset_path = os.path.join(self.general_asset_path, "bedroom", "bedroom.usd")
+        add_reference_to_stage(table_asset_path, "/bed1")
+        add_reference_to_stage(table_asset_path, "/bed2")
+        add_reference_to_stage(table_asset_path, "/bed3")
+        self._tables = [
+            SingleXFormPrim(
+                name="bed1",
+                prim_path="/bed1",
+                position=np.array([4, 3, 0]),
+                orientation=euler_angles_to_quats([0,0,-2*np.pi/3])
+            ),
+            SingleXFormPrim(
+                name="bed2",
+                prim_path="/bed2",
+                position=np.array([1, 8, 0]),
+                orientation=euler_angles_to_quats([0,0,-np.pi/2])
+            ),
+            SingleXFormPrim(
+                name="bed3",
+                prim_path="/bed3",
+                position=np.array([-2, 6, 0]),
+            ),
+        ]
+
+
+
+        self.support = [
+            FixedCuboid(
+                name="support1",
+                prim_path="/support/o_central",
+                position=np.array([-1.25,0.1,0.5]),
+                scale = np.array([0.5,0.07,1])
+            ),
+            FixedCuboid(
+                name="support2",
+                prim_path="/support/o_right",
+                position=np.array([-1.25,0.4,0.5]),
+                scale = np.array([0.5,0.07,1])
+            ),
+            FixedCuboid(
+                name="support3",
+                prim_path="/support/o_left",
+                position=np.array([-1.25,-0.2,0.5]),
+                scale = np.array([0.5,0.07,1])
+            )
+        ]
         
 
         # Return assets that were added to the stage so that they can be registered with the core.World
-        return self._conveyor, self._articulation, self._tray
+        return *self._tables, self._articulation, self._tray
 
     def setup(self):
         """
@@ -110,19 +143,14 @@ class DeliveringScript:
 
         self._set_arms_position(0,1.2217,0,1.2217,np.pi/2,0.349)
 
-        self._move_controller = DifferentialController(name="diff_ctrl", wheel_radius=0.2, wheel_base=0.56)
+        self._move_controller = AckermannController(
+            "test_controller", wheel_base=0, track_width=0.56, front_wheel_radius=0.4
+        )
 
         self._wheel_indices = [self._articulation.get_dof_index('left_wheel_f'),
         self._articulation.get_dof_index('right_wheel_f'),
         self._articulation.get_dof_index('left_wheel_d'),
         self._articulation.get_dof_index('right_wheel_d')]
-
-        self._gripper_indice = [
-            self._articulation.get_dof_index('left_Left_2_Joint'),
-            self._articulation.get_dof_index('left_Right_2_Joint'),
-            self._articulation.get_dof_index('right_Left_2_Joint'),
-            self._articulation.get_dof_index('right_Right_2_Joint')
-        ]
 
         self._kinematics_solver = LulaKinematicsSolver(
             urdf_path=os.path.join(self.general_asset_path, "a2d","a2d.urdf"),
@@ -137,7 +165,7 @@ class DeliveringScript:
         # joint_api.CreateBody1RelPathAttr("/tray1")
 
 
-        self._open_gripper()
+        # self._open_gripper()
 
         end_effector_name = "A2D_Link7_l"
         self._articulation_kinematics_solver = ArticulationKinematicsSolver(self._articulation,self._kinematics_solver, end_effector_name)
@@ -156,7 +184,7 @@ class DeliveringScript:
         behavior to ensure their script runs deterministically.
         """
         self._set_arms_position(0,1.2217,0,1.2217,np.pi/2,0.349)
-        self._open_gripper()
+        # self._open_gripper()
         # Start the script over by recreating the generator.
         self._script_generator = self.my_script()
 
@@ -184,6 +212,14 @@ class DeliveringScript:
 
     ################################### Functions
 
+    def receive_delvier_order(self, args):
+        if "1" in args["room"]:
+            self._room_id = 0
+        elif "2" in args["room"]:
+            self._room_id = 1
+        else:
+            self._room_id = 2
+
     def _set_body_position(self, body_lift : float, body_pitch : float, head_yaw : float, head_pitch : float):
         self._articulation.set_joint_positions(np.array([body_lift, body_pitch, head_yaw, head_pitch]),[0,5,6,9])
 
@@ -208,17 +244,6 @@ class DeliveringScript:
                                     joint_indices=self._wheel_indices)
         self._articulation.apply_action(action)
 
-    def _open_gripper(self):
-        action = ArticulationAction(joint_positions=[np.pi/4,-np.pi/4,np.pi/4,-np.pi/4],
-                                    joint_indices=self._gripper_indice)
-        self._articulation.apply_action(action)
-
-    def _close_gripper(self):
-        action = ArticulationAction(joint_positions=[0,0,0,0],
-                                    joint_indices=self._gripper_indice)
-        self._articulation.apply_action(action)
-
-
     def move_step(self, goal_pose, dt=1/60.0, pos_tol=0.05, yaw_tol=0.05, timeout=10000):
         """
         Allow to move the robot to a goal pose N,7 pos + orientation.
@@ -226,15 +251,14 @@ class DeliveringScript:
         
         # self._send_velocity_for_wheel(3,-3)
 
+        print("[DELIVERING] Setting arm")
+
         robot_base_translation,robot_base_orientation = self._articulation.get_world_pose()
         t = robot_base_translation + [-0.2,-0.1,1]
         
         self._kinematics_solver.set_robot_base_pose(robot_base_translation,robot_base_orientation)
 
-        print(self._articulation_kinematics_solver.compute_end_effector_pose())
-
-
-        t = np.array([-0.65640712, -0.1 ,  0.9307782])
+        t = np.array([-0.65640712, -0.1 ,  0.8307782])
         l_action, success = self._articulation_kinematics_solver.compute_inverse_kinematics(t)
 
 
@@ -248,14 +272,12 @@ class DeliveringScript:
             ee_trans, ee_ori = self._articulation_kinematics_solver.compute_end_effector_pose()
             trans_dist = distance_metrics.weighted_translational_distance(ee_trans, t)
             if trans_dist <= 0.01:
-                print(i)
                 break
             yield ()
 
-        t = np.array([-0.71, -0.1 ,  0.95])
+        t = np.array([-0.71, -0.1 ,  0.90])
         l_action, success = self._articulation_kinematics_solver.compute_inverse_kinematics(t)
 
-        print(success, l_action)
 
         self._articulation.apply_action(l_action)
         r_action = self._mirror_action_for_right_arm(l_action)
@@ -265,45 +287,123 @@ class DeliveringScript:
             ee_trans, ee_ori = self._articulation_kinematics_solver.compute_end_effector_pose()
             trans_dist = distance_metrics.weighted_translational_distance(ee_trans, t)
             if trans_dist <= 0.01:
-                print(i)
                 break
             yield ()
 
-        # self._close_gripper()
+        print("[DELIVERING] Going to take the crate")
 
-        # for i in range(1000):
-        #     gripper_pos = self._articulation.get_joint_positions(joint_indices=self._gripper_indice)
-        #     print(gripper_pos)
-        #     if abs(abs(gripper_pos[0])-abs(gripper_pos[1])) <= 0.3 and abs(abs(gripper_pos[2])-abs(gripper_pos[3])) <= 0.3:
-        #         print(i)
-        #         break
-        #     yield ()
+        self._send_velocity_for_wheel(1,1)
 
-        # # t = np.array([-0.71, -0.1 , 1.05])
-        # # l_action, success = self._articulation_kinematics_solver.compute_inverse_kinematics(t)
+        for i in range(1000):
+            r_trans, r_ori = self._articulation.get_world_pose()
+            if r_trans[0] < -0.33:
+                break
+            yield ()
 
-        # # print(success, l_action)
+        self._articulation.apply_action(ArticulationAction(joint_positions=[0.4],joint_indices=[0]))
 
-        # # self._articulation.apply_action(l_action)
-        # # r_action = self._mirror_action_for_right_arm(l_action)
-        # # self._articulation.apply_action(r_action)
+        print("[DELIVERING] Tray taken")
 
-        # # for i in range(1000):
-        # #     ee_trans, ee_ori = self._articulation_kinematics_solver.compute_end_effector_pose()
-        # #     trans_dist = distance_metrics.weighted_translational_distance(ee_trans, t)
-        # #     if trans_dist <= 0.01:
-        # #         print(i)
-        # #         break
-        # #     yield ()
+        self._send_velocity_for_wheel(-1,-1)
 
-        # self._send_velocity_for_wheel(-1,-1)
+        for i in range(1000):
+            r_trans, r_ori = self._articulation.get_world_pose()
+            if r_trans[0] > 0.1:
+                break
+            yield ()
+
+        self._articulation.apply_action(ArticulationAction(joint_positions=[0.2],joint_indices=[0]))
+
+        global_variables.state_machine_id = 1
+
+        self._articulation.apply_action(ArticulationAction(joint_positions=[-0.15],joint_indices=[0]))
+
+        print("[DELIVERING] Going to packing zone")
+
+        yield from self.go_to_goal([0,-0.5],[-0.1,-0.1],speed=2)
+
+        print("[DELIVERING] Arrived to packing zone")
+
+        while global_variables.state_machine_id != 2:
+            yield ()
+
+        print("[DELIVERING] Exiting packing zone")
+
+        self._send_velocity_for_wheel(-1,-1)
+
+        for i in range(1000):
+            r_trans, r_ori = self._articulation.get_world_pose()
+            if r_trans[1] > 0.2:
+                break
+            yield ()
 
 
-        return False
+        self._articulation.apply_action(ArticulationAction(joint_positions=[0.],joint_indices=[0]))
+
+        print("[DELIVERING] GOing to bedroom")
+
+        yield from self.go_to_goal(bedroom_targets[self._room_id], bedroom_targets[self._room_id],speed=2,trans_tolerance=0.8)
+
+        print("[DELIVERING] Arrived to bedroom")
+
+        return True
+    
+    def go_to_goal(self, ori_goal, pos_goal, speed : float = 1, trans_tolerance : float = 0.1, rot_tolerance : float = 0.1):
+
+        def compute_rot_err():
+            r_trans, r_ori = self._articulation.get_world_pose()
+            yaw = quats_to_euler_angles(r_ori)[2]
+            dx, dy = ori_goal[0] - r_trans[0], ori_goal[1] - r_trans[1]
+            goal_angle = np.arctan2(dy, dx)
+            return np.arctan2(np.sin(goal_angle - yaw), np.cos(goal_angle - yaw))
+        
+        def compute_dist_err():
+            r_trans, r_ori = self._articulation.get_world_pose()
+            err = np.linalg.norm([pos_goal[0] - r_trans[0], pos_goal[1] - r_trans[1]])
+            return err
+
+        err = compute_rot_err()
+        while abs(err) > rot_tolerance:  # 0.05 rad tolerance (~3°)
+            if err > 0:
+                self._send_velocity_for_wheel(-speed, speed) 
+            else:
+                self._send_velocity_for_wheel(speed, -speed)
+
+            yield ()
+
+            err = compute_rot_err()
+
+        self._send_velocity_for_wheel(speed,speed)
+
+        err = compute_dist_err() 
+        while err > trans_tolerance: # 0.05 m
+            linear = 2 * speed * abs(err-(trans_tolerance/2))
+            linear = np.clip(linear,-speed,speed)
+            self._send_velocity_for_wheel(linear,linear)
+            yield ()
+            err = compute_dist_err()
+
+        self._send_velocity_for_wheel(0,0)
+        
+        return True
     
 
-    # (array([-0.65640712, -0.1837069 ,  0.77307782]), 
-    # 
-    # array([[ 0.01631553, -0.39495108, -0.91855727],
-    #    [ 0.99344906,  0.11032455, -0.02979036],
-    #    [ 0.11310515, -0.9120538 ,  0.39416378]]))
+    # def move_with_controllers(self, xg, yg, theta):
+    #     r_trans, r_ori = self._articulation.get_world_pose()
+    #     ex = xg - r_trans[0]
+    #     ey = yg - r_trans[1]
+
+    #     k_rho = 1.0      # distance gain
+    #     k_alpha = 1.5    # heading gain
+
+    #     rho = math.sqrt(ex**2 + ey**2)
+    #     goal_heading = math.atan2(ey, ex)
+    #     alpha = goal_heading - theta
+
+    #     # Forward velocity slows down when near target
+    #     desired_forward_vel = min(2.0, k_rho * rho)
+
+    #     # Steering proportional to heading error
+    #     desired_steering_angle = max(-0.5, min(0.5, k_alpha * alpha))
+
+    #     orientation_error = theta_g - theta

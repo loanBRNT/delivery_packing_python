@@ -26,20 +26,22 @@ from isaacsim.robot_motion.motion_generation import ArticulationMotionPolicy, Rm
 from isaacsim.robot_motion.motion_generation.interface_config_loader import load_supported_motion_policy_config
 from isaacsim.storage.native import get_assets_root_path
 
-import time
+from . import global_variables
 
-ROBOT_POS = np.array([0.0, -1.5, 0.1])
+
+
+ROBOT_POS = np.array([0.0, -1.5, 0.5])
 ROBOT_ORI = euler_angles_to_quats([0, 0, 90])
 
-cube_offset = {
-    "pre" : np.array([0,0.2,0]),
-    "cur" : np.array([0,0,0]),
+bottle_offset = {
+    "pre" : np.array([0,0.1,0.1]),
+    "cur" : np.array([0,0,0.1]),
     "post" : np.array([0,0.1,0.05])
 }
-geforce_offset = {
-    "pre" : np.array([0,0,0.1]),
-    "cur" : np.array([-0.04,0,-0.03]),
-    "post" : np.array([0,0,0])
+book_offset = {
+    "pre" : np.array([0.03,0.01,0.1]),
+    "cur" : np.array([0.03,0.01,0.04]),
+    "post" : np.array([0.03,0,0.1])
 }
 tape_offset = {
     "pre" : np.array([0,0.1,0.05]),
@@ -48,8 +50,8 @@ tape_offset = {
 }
 
 close_position = {
-    "cube" : np.array([0.02,0.02]),
-    "geforce" : np.array([0.00,0.00]),
+    "bottle" : np.array([0.017,0.017]),
+    "book" : np.array([0.001,0.001]),
     "tape" : np.array([0.0105,0.0105])
 }
 
@@ -98,7 +100,7 @@ class PackingScript:
         self._side_table = SingleXFormPrim(
             name="side_table",
             prim_path=side_table_prim_path,
-            position=np.array([0.7, -1.5, 0]),
+            position=np.array([0.7, -1.5, 0.4]),
             orientation=euler_angles_to_quats([0, 0, np.deg2rad(90)]),
             scale=np.array([1,1,0.6])
         )
@@ -115,18 +117,14 @@ class PackingScript:
             scale=np.array([1.0, 1.0, 0.7]),
         )
         
-        # stool
-        # stool_asset_path = os.path.join(general_asset_path,"ikea_wood_stools", "ikea_wood_stools.usd")
-        # stool_prim_path = "/World/ikea_stool"
-        # add_reference_to_stage(stool_asset_path, stool_prim_path)
-        # self._stool = SingleXFormPrim(
-        #     prim_path=stool_prim_path,
-        #     name="ikea_stool",
-        #     position=np.array([0.0, 0.0, 0.15]),
-        #     orientation=euler_angles_to_quats([0, 0, 0]),
-        #     scale=np.array([1.0, 1.0, 1.0]),
-        #     # visible=False
-        # )
+        # Isaac/5.0/Isaac/Environments/Hospital/Props/SM_BottleB SM_SHelf_06
+
+        FixedCuboid(
+            name = "packing_plateforme",
+            prim_path="/World/packing_support",
+            position=np.array([0.0, -1.4, 0.15]),
+            scale=np.array([2.0,1.05,0.5])
+        )
 
         self.obstacles = [
             VisualCuboid(
@@ -134,15 +132,15 @@ class PackingScript:
                 name="obstacle1",
                 position=np.array([0., -1.0, 0.58]),
                 scale=np.array([1.0, 0.5, 0.3]),     
-                visible=False,             
+                visible=True,             
             ), 
 
             VisualCuboid(
                 prim_path="/World/Obstacles/SideTableProxy",
                 name="obstacle2",
-                position=np.array([0.7, -1.5, 0.33]),
+                position=np.array([0.7, -1.5, 0.73]),
                 scale=np.array([0.4, 1, 0.3]),     
-                visible=False,             
+                visible=True,             
             )
 
         ]
@@ -155,59 +153,57 @@ class PackingScript:
             SingleXFormPrim(
                 name="tape_1",
                 prim_path="/tape1",
-                position=np.array([-0.15,-2.2,0.57]),
+                position=np.array([-0.15,-2.2,0.97]),
                 orientation=euler_angles_to_quats([0, 0 ,np.pi/2])
             ),
             SingleXFormPrim(
                 name="tape_2",
                 prim_path="/tape2",
-                position=np.array([0,-2.2,0.57]),
+                position=np.array([0,-2.2,0.97]),
                 orientation=euler_angles_to_quats([0, 0 ,np.pi/2])
             )
         ]
         
-        # geforce
-        geforce_asset_path = os.path.join(general_asset_path, "geforce3080", "geforce3080.usd")
-        add_reference_to_stage(geforce_asset_path, "/geforce_1")
-        add_reference_to_stage(geforce_asset_path, "/geforce_2")
-        self._geforce = [
+        # book
+        book_asset_path = os.path.join(general_asset_path, "book", "book.usd")
+        add_reference_to_stage(book_asset_path, "/book1")
+        add_reference_to_stage(book_asset_path, "/book2")
+        self._book = [
             SingleXFormPrim(
-                name="geforce_1",
-                prim_path="/geforce_1",
-                position=np.array([0.6,-1.6,0.54]),
-                orientation=euler_angles_to_quats([0, 0 ,0]),
-                scale=[0.5,0.5,0.5]
+                name="book1",
+                prim_path="/book1",
+                position=np.array([0.55,-1.4,0.90]),
+                orientation=euler_angles_to_quats([np.pi/2, 0 ,np.pi/2])
             ),
             SingleXFormPrim(
-                name="geforce_2",
-                prim_path="/geforce_2",
-                position=np.array([0.6,-1.4,0.54]),
-                orientation=euler_angles_to_quats([0, 0 ,0]),
-                scale=[0.5,0.5,0.5]
+                name="book2",
+                prim_path="/book2",
+                position=np.array([0.55,-1.6,0.90]),
+                orientation=euler_angles_to_quats([np.pi/2, 0 ,np.pi/2])
             )
         ]
 
-        self._blue_cubes = [
-            DynamicCuboid(
-            name="bc1",
-            position=np.array([0., -2.2, 1.0]),
-            scale=np.array([1.,1.,2.5]),
-            prim_path="/World/blue_cube_1",
-            size=0.05,
-            color=np.array([0, 0, 1]),),
-            DynamicCuboid(
-            name="bc2",
-            scale=np.array([1.,1.,2.5]),
-            position=np.array([0.3, -2.2, 0.6]),
-            prim_path="/World/blue_cube_2",
-            size=0.05,
-            color=np.array([0, 0, 1]),),
+        bottle_asset_path = os.path.join(general_asset_path, "bottle", "bottle.usd")
+        add_reference_to_stage(bottle_asset_path, "/bottle1")
+        add_reference_to_stage(bottle_asset_path, "/bottle2")
+
+        self._bottles = [
+            SingleXFormPrim(
+            name="bottle1",
+            position=np.array([0., -2.15, 1.35]),
+            prim_path="/bottle1",
+            ),
+            SingleXFormPrim(
+            name="bottle2",
+            position=np.array([0.3, -2.15, 0.95]),
+            prim_path="/bottle2",
+            ),
         ]
 
         self._ground_plane = GroundPlane("/World/Ground")
 
         # Return assets that were added to the stage so that they can be registered with the core.World
-        return self._articulation, self._ground_plane, *self._blue_cubes, self._shelve, *self.obstacles, *self._geforce
+        return self._articulation, self._ground_plane, *self._bottles, self._shelve, *self.obstacles, *self._book
 
     def setup(self):
         """
@@ -218,8 +214,6 @@ class PackingScript:
 
         # Loading RMPflow can be done quickly for supported robots
         rmp_config = load_supported_motion_policy_config("Franka", "RMPflow")
-
-        # print(rmp_config)
 
         # Initialize an RmpFlow object
         self._rmpflow = RmpFlow(**rmp_config)
@@ -247,10 +241,12 @@ class PackingScript:
         behavior to ensure their script runs deterministically.
         """
         # Start the script over by recreating the generator.
+        global_variables.state_machine_id = 0
         self._script_generator = self.my_script()
 
     """
-    The following two functions demonstrate the mechanics of running code in a script-like way
+    The following two functions demonstrate the mechanics of running code in a script-like[0.00793253 0.0080996 ]
+ way
     from a UI-based extension.  This takes advantage of Python's yield/generator framework.  
 
     The update() function is tied to a physics subscription, which means that it will be called
@@ -268,66 +264,67 @@ class PackingScript:
 
     def my_script(self):
         self._delivery = True
-        self._delivery_argument = {"tape":2}
-        yield from ()
-        if self._delivery:
-            target_pos = np.array([0.1, -1.1, 0.75]) # A tuner
-            base_orientation = euler_angles_to_quats([np.pi,0,0])
-            for obj_name, val in self._delivery_argument.items():
-                if "geforce" in obj_name:
-                    shelve_take_orientation = euler_angles_to_quats([np.pi,0,0])
-                    offsets = geforce_offset
-                    close_pos = close_position["geforce"]
-                    obj_placeholder = self._geforce
-                elif "cube" in obj_name:
-                    shelve_take_orientation = euler_angles_to_quats([0, np.pi/2, -np.pi/2])
-                    offsets = cube_offset
-                    close_pos = close_position["cube"]
-                    obj_placeholder = self._blue_cubes
-                elif "tape" in obj_name:
-                    shelve_take_orientation = euler_angles_to_quats([0, np.pi/2, -np.pi/2])
-                    offsets = tape_offset
-                    close_pos = close_position["tape"]
-                    obj_placeholder = self._tapes
-                else:
-                    print("[PACKING] Unknown object : ", obj_name)
-                    continue
-            
-                yield from self.open_gripper_franka(self._articulation)  
+        self._delivery_argument = {"book":2,"tape":1}
+        while True:
+            yield ()
+            if self._delivery and global_variables.state_machine_id == 1:
+                target_pos = np.array([0., -0.8, 1.05]) # A tuner
+                base_orientation = euler_angles_to_quats([-np.pi/2,np.pi/2,0])
+                for obj_name, val in self._delivery_argument.items():
+                    if "book" in obj_name:
+                        shelve_take_orientation = euler_angles_to_quats([np.pi,0,0])
+                        offsets = book_offset
+                        close_pos = close_position["book"]
+                        obj_placeholder = self._book
+                    elif "bottle" in obj_name:
+                        shelve_take_orientation = euler_angles_to_quats([0, np.pi/2, -np.pi/2])
+                        offsets = bottle_offset
+                        close_pos = close_position["bottle"]
+                        obj_placeholder = self._bottles
+                    elif "tape" in obj_name:
+                        shelve_take_orientation = euler_angles_to_quats([0, np.pi/2, -np.pi/2])
+                        offsets = tape_offset
+                        close_pos = close_position["tape"]
+                        obj_placeholder = self._tapes
+                    else:
+                        print("[PACKING] Unknown object : ", obj_name)
+                        continue
+                
+                    yield from self.open_gripper_franka(self._articulation)  
 
-                for i in range(val):
-                    obj = obj_placeholder[i]
-                    obj_pos, _ = obj.get_world_pose()
-                    
-                    success = yield from self.goto_position(
-                        obj_pos + offsets["pre"] , shelve_take_orientation, self._articulation, self._rmpflow
-                    )
-                    print("[PACKING] pre take : ", success)
+                    for i in range(val):
+                        obj = obj_placeholder[i]
+                        obj_pos, _ = obj.get_world_pose()
+                        
+                        success = yield from self.goto_position(
+                            obj_pos + offsets["pre"] , shelve_take_orientation, self._articulation, self._rmpflow
+                        )
+                        print("[PACKING] pre take : ", success)
 
-                    obj_pos, _ = obj.get_world_pose()
+                        obj_pos, _ = obj.get_world_pose()
 
-                    success = yield from self.goto_position(
-                        obj_pos + offsets["cur"], shelve_take_orientation, self._articulation, self._rmpflow
-                    )
-                    print("[PACKING] take : ", success)
+                        success = yield from self.goto_position(
+                            obj_pos + offsets["cur"], shelve_take_orientation, self._articulation, self._rmpflow
+                        )
+                        print("[PACKING] take : ", success)
 
-                    yield from self.close_gripper_franka(self._articulation, close_position=close_pos, atol=0.01)
+                        yield from self.close_gripper_franka(self._articulation, close_position=close_pos, atol=0.002)
 
-                    print("[PACKING] closed")
+                        print("[PACKING] closed")
 
-                    success = yield from self.goto_position(
-                        obj_pos + offsets["post"] , shelve_take_orientation, self._articulation, self._rmpflow, timeout=200
-                    )
-                    print("[PACKING] post take : ", success)
+                        success = yield from self.goto_position(
+                            obj_pos + offsets["post"] , shelve_take_orientation, self._articulation, self._rmpflow, timeout=200
+                        )
+                        print("[PACKING] post take : ", success)
 
-                    success = yield from self.goto_position(
-                        target_pos , base_orientation, self._articulation, self._rmpflow
-                    )
-                    print("[PACKING] deposit : ", success)
+                        success = yield from self.goto_position(
+                            target_pos , base_orientation, self._articulation, self._rmpflow
+                        )
+                        print("[PACKING] deposit : ", success)
 
-                    yield from self.open_gripper_franka(self._articulation)
-            self._delivery = False
-            raise StopIteration
+                        yield from self.open_gripper_franka(self._articulation)
+                self._delivery = False
+                global_variables.state_machine_id = 2
 
 
     ################################### Functions
@@ -392,13 +389,35 @@ class PackingScript:
 
         return True
 
-    def close_gripper_franka(self, articulation, close_position=np.array([0, 0]), atol=0.05):
-        # To close around the cube, different values are passed in for close_position and atol
+    def close_gripper_franka(self, articulation, close_position=np.array([0, 0]), atol=0.01):
+        # To close around the bottle, different values are passed in for close_position and atol
         open_gripper_action = ArticulationAction(np.array(close_position), joint_indices=np.array([7, 8]))
         articulation.apply_action(open_gripper_action)
 
         # Check in once a frame until the gripper has been successfully closed.
-        while not np.allclose(articulation.get_joint_positions()[7:], np.array(close_position), atol=atol):
-            yield ()
+        steps = 0
+        history = []
+        stable_frames = 15
+        while steps < 1000:
+            steps += 1
+            current_pos = articulation.get_joint_positions()[7:]
+            history.append(current_pos.copy())
+
+            # Condition 1: reached target
+            if np.allclose(current_pos, close_position, atol=atol):
+                return True
+
+            # Condition 2: stabilized (no movement for stable_frames)
+            if len(history) >= stable_frames:
+                diffs = np.ptp(np.stack(history), axis=0) 
+                print(diffs)
+                if np.all(diffs < 0.01):
+                    return True
+                history.pop(0)
+
+            yield ()  # yield control back (async step)
+
+        if steps >= 1000:
+            return False
 
         return True
