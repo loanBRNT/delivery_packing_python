@@ -1,0 +1,17 @@
+# Author Loan BERNAT
+
+services:
+  agent:
+    build: .
+    container_name: Agent
+    environment:
+      - MODEL_ID=Salesforce/xLAM-2-1b-fc-r
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: ["gpu"]
+              device_ids: ['0']
+    ports:
+      - 8888:8888

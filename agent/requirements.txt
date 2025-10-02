@@ -1,0 +1,5 @@
+transformers
+uvicorn
+fastapi
+accelerate
+protobuf
