@@ -1,17 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-# SPDX-License-Identifier: Apache-2.0
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Author Loan BERNAT
 
 import numpy as np
 import os
@@ -49,10 +36,17 @@ tape_offset = {
     "post" : np.array([0,0.1,0.05])
 }
 
+pill_offset = {
+    "pre" : np.array([0,0,0.1]),
+    "cur" : np.array([0,0,0]),
+    "post" : np.array([0,0,0.1])
+}
+ 
 close_position = {
-    "bottle" : np.array([0.017,0.017]),
+    "bottle" : np.array([0.005,0.005]),
     "book" : np.array([0.001,0.001]),
-    "tape" : np.array([0.0105,0.0105])
+    "tape" : np.array([0.0105,0.0105]),
+    "pill" : np.array([0,0])
 }
 
 class PackingScript:
@@ -83,7 +77,7 @@ class PackingScript:
         )
 
         # Robot Franka
-        robot_prim_path = "/packing_robot"
+        robot_prim_path = "/robots/packing_robot"
         path_to_robot_usd = get_assets_root_path() + "/Isaac/Robots/FrankaRobotics/FrankaPanda/franka.usd"
         add_reference_to_stage(path_to_robot_usd, robot_prim_path)
         self._articulation = SingleArticulation(
@@ -94,7 +88,7 @@ class PackingScript:
         )
 
         # side table
-        side_table_prim_path = "/side_table"
+        side_table_prim_path = "/World/side_table"
         side_table_usd_path = get_assets_root_path() + "/Isaac/Environments/Hospital/Props/SM_SideTable_02a.usd"
         add_reference_to_stage(side_table_usd_path,side_table_prim_path)
         self._side_table = SingleXFormPrim(
@@ -132,7 +126,7 @@ class PackingScript:
                 name="obstacle1",
                 position=np.array([0., -1.0, 0.58]),
                 scale=np.array([1.0, 0.5, 0.3]),     
-                visible=True,             
+                visible=False,             
             ), 
 
             VisualCuboid(
@@ -140,64 +134,83 @@ class PackingScript:
                 name="obstacle2",
                 position=np.array([0.7, -1.5, 0.73]),
                 scale=np.array([0.4, 1, 0.3]),     
-                visible=True,             
+                visible=False,             
             )
 
         ]
         
         # tape
         tape_asset_path = os.path.join(general_asset_path, "measuring_tape", "tape", "tape.usd")
-        add_reference_to_stage(tape_asset_path,"/tape1")
-        add_reference_to_stage(tape_asset_path,"/tape2")
+        add_reference_to_stage(tape_asset_path,"/tapes/tape1")
+        add_reference_to_stage(tape_asset_path,"/tapes/tape2")
+        add_reference_to_stage(tape_asset_path,"/tapes/tape3")
         self._tapes = [
             SingleXFormPrim(
                 name="tape_1",
-                prim_path="/tape1",
+                prim_path="/tapes/tape1",
                 position=np.array([-0.15,-2.2,0.97]),
                 orientation=euler_angles_to_quats([0, 0 ,np.pi/2])
             ),
             SingleXFormPrim(
                 name="tape_2",
-                prim_path="/tape2",
+                prim_path="/tapes/tape2",
                 position=np.array([0,-2.2,0.97]),
                 orientation=euler_angles_to_quats([0, 0 ,np.pi/2])
+            ),
+            SingleXFormPrim(
+                name="tape_3",
+                prim_path="/tapes/tape3",
+                position=np.array([-0.25,-2.2,1.35]),
+                orientation=euler_angles_to_quats([0, 0 ,np.pi/2])
             )
+            
         ]
         
         # book
         book_asset_path = os.path.join(general_asset_path, "book", "book.usd")
-        add_reference_to_stage(book_asset_path, "/book1")
-        add_reference_to_stage(book_asset_path, "/book2")
+        add_reference_to_stage(book_asset_path, "/books/book1")
+        add_reference_to_stage(book_asset_path, "/books/book2")
         self._book = [
             SingleXFormPrim(
                 name="book1",
-                prim_path="/book1",
+                prim_path="/books/book1",
                 position=np.array([0.55,-1.4,0.90]),
                 orientation=euler_angles_to_quats([np.pi/2, 0 ,np.pi/2])
             ),
             SingleXFormPrim(
                 name="book2",
-                prim_path="/book2",
+                prim_path="/books/book2",
                 position=np.array([0.55,-1.6,0.90]),
                 orientation=euler_angles_to_quats([np.pi/2, 0 ,np.pi/2])
             )
         ]
 
         bottle_asset_path = os.path.join(general_asset_path, "bottle", "bottle.usd")
-        add_reference_to_stage(bottle_asset_path, "/bottle1")
-        add_reference_to_stage(bottle_asset_path, "/bottle2")
-
+        add_reference_to_stage(bottle_asset_path, "/bottles/bottle1")
+        add_reference_to_stage(bottle_asset_path, "/bottles/bottle2")
         self._bottles = [
             SingleXFormPrim(
             name="bottle1",
             position=np.array([0., -2.15, 1.35]),
-            prim_path="/bottle1",
+            prim_path="/bottles/bottle1",
             ),
             SingleXFormPrim(
             name="bottle2",
             position=np.array([0.3, -2.15, 0.95]),
-            prim_path="/bottle2",
-            ),
+            prim_path="/bottles/bottle2",
+            )
+        ]
+
+        #pills
+        pills_asset_path = os.path.join(general_asset_path, "pills", "pills.usd")
+        add_reference_to_stage(pills_asset_path, "/pills/pill1")
+        self._pills = [
+            SingleXFormPrim(
+                name="pill1",
+                prim_path="/pills/pill1",
+                position=np.array([0.57, -1.2, 0.90]),
+                orientation=euler_angles_to_quats([np.pi/2, 0 ,0])
+            )
         ]
 
         self._ground_plane = GroundPlane("/World/Ground")
@@ -263,8 +276,6 @@ class PackingScript:
             return True
 
     def my_script(self):
-        self._delivery = True
-        self._delivery_argument = {"book":2,"tape":1}
         while True:
             yield ()
             if self._delivery and global_variables.state_machine_id == 1:
@@ -286,12 +297,18 @@ class PackingScript:
                         offsets = tape_offset
                         close_pos = close_position["tape"]
                         obj_placeholder = self._tapes
+                    elif "pill" in obj_name:
+                        shelve_take_orientation = euler_angles_to_quats([np.pi,0,0])
+                        offsets = pill_offset
+                        close_pos = close_position["pill"]
+                        obj_placeholder = self._pills
                     else:
                         print("[PACKING] Unknown object : ", obj_name)
                         continue
                 
                     yield from self.open_gripper_franka(self._articulation)  
-
+                    if val > len(obj_placeholder):
+                        val = len(obj_placeholder)
                     for i in range(val):
                         obj = obj_placeholder[i]
                         obj_pos, _ = obj.get_world_pose()

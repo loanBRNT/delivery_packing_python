@@ -1,17 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-# SPDX-License-Identifier: Apache-2.0
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Author Loan BERNAT
 
 import numpy as np
 import os, math
@@ -47,6 +34,8 @@ class DeliveringScript:
 
         self._script_generator = None
 
+        self.delivery = False
+
     def load_objects(self):
         """Load assets onto the stage and return them so they can be registered with the
         core.World.
@@ -61,7 +50,7 @@ class DeliveringScript:
             os.path.dirname(__file__), "..", "assets"
         )
 
-        robot_prim_path = "/delivery_robot"
+        robot_prim_path = "/robots/delivery_robot"
         path_to_robot_usd = os.path.join(self.general_asset_path, "a2d", "a2d_finger.usd")
         add_reference_to_stage(path_to_robot_usd, robot_prim_path)
         self._articulation = SingleArticulation(
@@ -73,11 +62,11 @@ class DeliveringScript:
 
         #tray
         tray_asset_path = os.path.join(self.general_asset_path,"ikea_tray","ikea_tray.usd")
-        tray_prim_path = "/tray1"
+        tray_prim_path = "/tray"
         add_reference_to_stage(tray_asset_path,tray_prim_path)
         
         self._tray = SingleXFormPrim(
-            name="tray1",
+            name="tray",
             prim_path=tray_prim_path,
             position=np.array([-1.1, 0.1, 1.05]),
             orientation=euler_angles_to_quats([0, 0, np.deg2rad(90)]),
@@ -86,25 +75,25 @@ class DeliveringScript:
 
         #tables
         table_asset_path = os.path.join(self.general_asset_path, "bedroom", "bedroom.usd")
-        add_reference_to_stage(table_asset_path, "/bed1")
-        add_reference_to_stage(table_asset_path, "/bed2")
-        add_reference_to_stage(table_asset_path, "/bed3")
+        add_reference_to_stage(table_asset_path, "/bedroom/bed1")
+        add_reference_to_stage(table_asset_path, "/bedroom/bed2")
+        add_reference_to_stage(table_asset_path, "/bedroom/bed3")
         self._tables = [
             SingleXFormPrim(
                 name="bed1",
-                prim_path="/bed1",
+                prim_path="/bedroom/bed1",
                 position=np.array([4, 3, 0]),
                 orientation=euler_angles_to_quats([0,0,-2*np.pi/3])
             ),
             SingleXFormPrim(
                 name="bed2",
-                prim_path="/bed2",
+                prim_path="/bedroom/bed2",
                 position=np.array([1, 8, 0]),
                 orientation=euler_angles_to_quats([0,0,-np.pi/2])
             ),
             SingleXFormPrim(
                 name="bed3",
-                prim_path="/bed3",
+                prim_path="/bedroom/bed3",
                 position=np.array([-2, 6, 0]),
             ),
         ]
@@ -157,21 +146,13 @@ class DeliveringScript:
             robot_description_path=os.path.join(self.general_asset_path, "a2d","a2d_description.yaml"),
         )
 
-        # stage = get_current_stage()
-        # joint_prim = stage.DefinePrim("/simulated_grasp", "PhysicsRigidJoint")
-        # joint_api = UsdPhysics.Joint(joint_prim)
-        # joint_api.CreateJointTypeAttr("fixed")
-        # joint_api.CreateBody0RelPathAttr("/World/robot/base_link")
-        # joint_api.CreateBody1RelPathAttr("/tray1")
-
-
-        # self._open_gripper()
-
         end_effector_name = "A2D_Link7_l"
         self._articulation_kinematics_solver = ArticulationKinematicsSolver(self._articulation,self._kinematics_solver, end_effector_name)
 
         # Create a script generator to execute my_script().
         self._script_generator = self.my_script()
+
+        self.delivery = False
 
     def reset(self):
         """
@@ -184,6 +165,7 @@ class DeliveringScript:
         behavior to ensure their script runs deterministically.
         """
         self._set_arms_position(0,1.2217,0,1.2217,np.pi/2,0.349)
+        self.delivery = False
         # self._open_gripper()
         # Start the script over by recreating the generator.
         self._script_generator = self.my_script()
@@ -207,12 +189,111 @@ class DeliveringScript:
 
     def my_script(self):
 
-        yield from self.move_step(np.array([5,0,0,1,0,0,0]))
+        while True:
+            if self.delivery:
+
+                print("[DELIVERING] Setting arm")
+
+                robot_base_translation,robot_base_orientation = self._articulation.get_world_pose()
+                t = robot_base_translation + [-0.2,-0.1,1]
+                
+                self._kinematics_solver.set_robot_base_pose(robot_base_translation,robot_base_orientation)
+
+                t = np.array([-0.65640712, -0.1 ,  0.8307782])
+                l_action, success = self._articulation_kinematics_solver.compute_inverse_kinematics(t)
+
+
+                self._articulation.apply_action(l_action)
+                r_action = self._mirror_action_for_right_arm(l_action)
+                self._articulation.apply_action(r_action)
+
+                # print(success, action)
+
+                for i in range(1000):
+                    ee_trans, ee_ori = self._articulation_kinematics_solver.compute_end_effector_pose()
+                    trans_dist = distance_metrics.weighted_translational_distance(ee_trans, t)
+                    if trans_dist <= 0.01:
+                        break
+                    yield ()
+
+                t = np.array([-0.71, -0.1 ,  0.90])
+                l_action, success = self._articulation_kinematics_solver.compute_inverse_kinematics(t)
+
+
+                self._articulation.apply_action(l_action)
+                r_action = self._mirror_action_for_right_arm(l_action)
+                self._articulation.apply_action(r_action)
+
+                for i in range(1000):
+                    ee_trans, ee_ori = self._articulation_kinematics_solver.compute_end_effector_pose()
+                    trans_dist = distance_metrics.weighted_translational_distance(ee_trans, t)
+                    if trans_dist <= 0.01:
+                        break
+                    yield ()
+
+                print("[DELIVERING] Going to take the crate")
+
+                self._send_velocity_for_wheel(1,1)
+
+                for i in range(1000):
+                    r_trans, r_ori = self._articulation.get_world_pose()
+                    if r_trans[0] < -0.33:
+                        break
+                    yield ()
+
+                self._articulation.apply_action(ArticulationAction(joint_positions=[0.2],joint_indices=[0]))
+
+                print("[DELIVERING] Tray taken")
+
+                self._send_velocity_for_wheel(-1,-1)
+
+                for i in range(1000):
+                    r_trans, r_ori = self._articulation.get_world_pose()
+                    if r_trans[0] > 0.1:
+                        break
+                    yield ()
+
+                global_variables.state_machine_id = 1
+
+                self._articulation.apply_action(ArticulationAction(joint_positions=[-0.15],joint_indices=[0]))
+
+                print("[DELIVERING] Going to packing zone")
+
+                yield from self.go_to_goal([0,-0.5],[-0.1,-0.1],speed=2)
+
+                print("[DELIVERING] Arrived to packing zone")
+
+                while global_variables.state_machine_id != 2:
+                    yield ()
+
+                print("[DELIVERING] Exiting packing zone")
+
+                self._send_velocity_for_wheel(-1,-1)
+
+                for i in range(1000):
+                    r_trans, r_ori = self._articulation.get_world_pose()
+                    if r_trans[1] > 0.2:
+                        break
+                    yield ()
+
+
+                self._articulation.apply_action(ArticulationAction(joint_positions=[0.],joint_indices=[0]))
+
+                print("[DELIVERING] GOing to bedroom")
+
+                yield from self.go_to_goal(bedroom_targets[self._room_id], bedroom_targets[self._room_id],speed=2,trans_tolerance=0.8)
+
+                print("[DELIVERING] Arrived to bedroom")
+                self.delivery = False
+                global_variables.state_machine_id = 3
+
+            yield ()
 
 
     ################################### Functions
 
     def receive_delvier_order(self, args):
+        self.delivery = True
         if "1" in args["room"]:
             self._room_id = 0
         elif "2" in args["room"]:
@@ -243,110 +324,6 @@ class DeliveringScript:
         action = ArticulationAction(joint_velocities=[left_velocity, right_velocity, left_velocity, right_velocity],
                                     joint_indices=self._wheel_indices)
         self._articulation.apply_action(action)
-
-    def move_step(self, goal_pose, dt=1/60.0, pos_tol=0.05, yaw_tol=0.05, timeout=10000):
-        """
-        Allow to move the robot to a goal pose N,7 pos + orientation.
-        """
-        
-        # self._send_velocity_for_wheel(3,-3)
-
-        print("[DELIVERING] Setting arm")
-
-        robot_base_translation,robot_base_orientation = self._articulation.get_world_pose()
-        t = robot_base_translation + [-0.2,-0.1,1]
-        
-        self._kinematics_solver.set_robot_base_pose(robot_base_translation,robot_base_orientation)
-
-        t = np.array([-0.65640712, -0.1 ,  0.8307782])
-        l_action, success = self._articulation_kinematics_solver.compute_inverse_kinematics(t)
-
-
-        self._articulation.apply_action(l_action)
-        r_action = self._mirror_action_for_right_arm(l_action)
-        self._articulation.apply_action(r_action)
-
-        # print(success, action)
-
-        for i in range(1000):
-            ee_trans, ee_ori = self._articulation_kinematics_solver.compute_end_effector_pose()
-            trans_dist = distance_metrics.weighted_translational_distance(ee_trans, t)
-            if trans_dist <= 0.01:
-                break
-            yield ()
-
-        t = np.array([-0.71, -0.1 ,  0.90])
-        l_action, success = self._articulation_kinematics_solver.compute_inverse_kinematics(t)
-
-
-        self._articulation.apply_action(l_action)
-        r_action = self._mirror_action_for_right_arm(l_action)
-        self._articulation.apply_action(r_action)
-
-        for i in range(1000):
-            ee_trans, ee_ori = self._articulation_kinematics_solver.compute_end_effector_pose()
-            trans_dist = distance_metrics.weighted_translational_distance(ee_trans, t)
-            if trans_dist <= 0.01:
-                break
-            yield ()
-
-        print("[DELIVERING] Going to take the crate")
-
-        self._send_velocity_for_wheel(1,1)
-
-        for i in range(1000):
-            r_trans, r_ori = self._articulation.get_world_pose()
-            if r_trans[0] < -0.33:
-                break
-            yield ()
-
-        self._articulation.apply_action(ArticulationAction(joint_positions=[0.4],joint_indices=[0]))
-
-        print("[DELIVERING] Tray taken")
-
-        self._send_velocity_for_wheel(-1,-1)
-
-        for i in range(1000):
-            r_trans, r_ori = self._articulation.get_world_pose()
-            if r_trans[0] > 0.1:
-                break
-            yield ()
-
-        self._articulation.apply_action(ArticulationAction(joint_positions=[0.2],joint_indices=[0]))
-
-        global_variables.state_machine_id = 1
-
-        self._articulation.apply_action(ArticulationAction(joint_positions=[-0.15],joint_indices=[0]))
-
-        print("[DELIVERING] Going to packing zone")
-
-        yield from self.go_to_goal([0,-0.5],[-0.1,-0.1],speed=2)
-
-        print("[DELIVERING] Arrived to packing zone")
-
-        while global_variables.state_machine_id != 2:
-            yield ()
-
-        print("[DELIVERING] Exiting packing zone")
-
-        self._send_velocity_for_wheel(-1,-1)
-
-        for i in range(1000):
-            r_trans, r_ori = self._articulation.get_world_pose()
-            if r_trans[1] > 0.2:
-                break
-            yield ()
-
-
-        self._articulation.apply_action(ArticulationAction(joint_positions=[0.],joint_indices=[0]))
-
-        print("[DELIVERING] GOing to bedroom")
-
-        yield from self.go_to_goal(bedroom_targets[self._room_id], bedroom_targets[self._room_id],speed=2,trans_tolerance=0.8)
-
-        print("[DELIVERING] Arrived to bedroom")
-
-        return True
     
     def go_to_goal(self, ori_goal, pos_goal, speed : float = 1, trans_tolerance : float = 0.1, rot_tolerance : float = 0.1):
 
@@ -387,23 +364,3 @@ class DeliveringScript:
         
         return True
     
-
-    # def move_with_controllers(self, xg, yg, theta):
-    #     r_trans, r_ori = self._articulation.get_world_pose()
-    #     ex = xg - r_trans[0]
-    #     ey = yg - r_trans[1]
-
-    #     k_rho = 1.0      # distance gain
-    #     k_alpha = 1.5    # heading gain
-
-    #     rho = math.sqrt(ex**2 + ey**2)
-    #     goal_heading = math.atan2(ey, ex)
-    #     alpha = goal_heading - theta
-
-    #     # Forward velocity slows down when near target
-    #     desired_forward_vel = min(2.0, k_rho * rho)
-
-    #     # Steering proportional to heading error
-    #     desired_steering_angle = max(-0.5, min(0.5, k_alpha * alpha))
-
-    #     orientation_error = theta_g - theta

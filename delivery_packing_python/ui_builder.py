@@ -7,15 +7,17 @@ from isaacsim.core.api.world import World
 from isaacsim.core.prims import SingleXFormPrim
 from isaacsim.core.utils.stage import create_new_stage, get_current_stage
 from isaacsim.examples.extension.core_connectors import LoadButton, ResetButton
-from isaacsim.gui.components.element_wrappers import CollapsableFrame, StateButton, StringField, DropDown
+from isaacsim.gui.components.element_wrappers import CollapsableFrame, StateButton, StringField, DropDown, TextBlock, Button
 from isaacsim.gui.components.ui_utils import get_style
 from omni.usd import StageEventType
 from pxr import Sdf, UsdLux
 
 from .packing_scenario import PackingScript
 from .delivery_scenario import DeliveringScript
+from . import global_variables as global_variables
+import requests, json, random
 
-import requests, json
+acceptance_answer = ["Okay I arrive soon","We will brings you that","Ok, we got this"]
 
 class UIBuilder:
     def __init__(self):
@@ -29,6 +31,8 @@ class UIBuilder:
 
         # Run initialization for the provided example
         self._on_init()
+
+        self.history = []
 
     ###################################################################################
     #           The Functions Below Are Called Automatically By extension.py
@@ -110,11 +114,6 @@ class UIBuilder:
 
         with run_scenario_frame:
             with ui.VStack(style=get_style(), spacing=5, height=0):
-                self._query_field = StringField(
-                    label="Enter your query here",
-                    default_value="Hello, can I have 3 red cubes please?",
-                    multiline_okay=True
-                )
                 self._bedroom_selector = DropDown(
                     label="Select here from which room you are ordering",
                     populate_fn=self.get_items,
@@ -128,12 +127,51 @@ class UIBuilder:
                     on_b_click_fn=self._on_run_scenario_b_text,
                     physics_callback_fn=self._update_scenario,
                 )
+                self._query_field = StringField(
+                    label="Enter your query here",
+                    default_value="Hello, can I have one measuring tape?",
+                    multiline_okay=True,
+                )
+                self._send_btn = Button(
+                    label="Send the message to the model",
+                    text="Send",
+                    on_click_fn=self._send_request
+                )
+                self._model_answer = TextBlock(
+                    label="The model answer",
+                    text="",
+                    num_lines=2,
+                    include_copy_button=False,
+                )
                 self._scenario_state_btn.enabled = False
                 self.wrapped_ui_elements.append(self._scenario_state_btn)
 
     ######################################################################################
     # Functions Below This Point Support The Provided Example And Can Be Deleted/Replaced
     ######################################################################################
+
+    def _send_request(self):
+        bedroom = self._bedroom_selector.get_selection()
+        if not bedroom:
+            raise ValueError("You must select a bedroom")
+        url = "http://localhost:8888/chat"
+        payload = {"query": self._query_field.get_value(),"history":self.history}
+        response = requests.post(url, json=payload)
+        packing_arg = {}
+        try:
+            response_list = json.loads(response.json())
+            packing_arg = response_list[0]["arguments"]
+            self._model_answer.set_text(random.choice(acceptance_answer))
+            delivering_arg = {"room":bedroom}
+            self._packing_script.receive_deliver_order(packing_arg)
+            self._delivering_script.receive_delvier_order(delivering_arg)
+        except:
+            packing_arg = {}
+            self._model_answer.set_text(response.text)
+            self.history.extend([
+                {"author":"user","content":self._query_field.get_value()},
+                {"author":"assistant","content":response.text}
+            ])
 
     def _on_init(self):
         self._packing_script = PackingScript()
@@ -156,6 +194,7 @@ class UIBuilder:
         """
         create_new_stage()
         self._add_light_to_stage()
+        global_variables.state_machine_id = 0
 
         loaded_objects = self._packing_script.load_objects() + self._delivering_script.load_objects()
 
@@ -172,6 +211,7 @@ class UIBuilder:
         """
         self._packing_script.setup()
         self._delivering_script.setup()
+        global_variables.state_machine_id = 0
 
         # UI management
         self._scenario_state_btn.reset()
@@ -193,6 +233,8 @@ class UIBuilder:
         self._scenario_state_btn.reset()
         self._scenario_state_btn.enabled = True
 
+        self.history = []
+
     def _update_scenario(self, step: float):
         """This function is attached to the Run Scenario StateButton.
         This function was passed in as the physics_callback_fn argument.
@@ -205,8 +247,10 @@ class UIBuilder:
             step (float): The dt of the current physics step
         """
         self._packing_script.update(step)
-        done = self._delivering_script.update(step)
-        if done:
+        self._delivering_script.update(step)
+
+        if global_variables.state_machine_id == 3:
+            self._model_answer.set_text("Here is your order")
             self._scenario_state_btn.enabled = False
 
     def _on_run_scenario_a_text(self):
@@ -219,20 +263,8 @@ class UIBuilder:
         the timeline is paused, which means that no physics steps will occur until the user makes it play either programmatically or
         through the left-hand UI toolbar.
         """
-        bedroom = self._bedroom_selector.get_selection()
-        if not bedroom:
-            raise ValueError("You must select a bedroom")
-        # url = "http://localhost:8888/chat"
-        # payload = {"query": self._query_field.get_value()}
-        # response = requests.post(url, json=payload)
-        # response_list = json.loads(response.json())
-        # arg = response_list[0]["arguments"]
-        packing_arg = {}
-        delivering_arg = {"room":bedroom}
-        self._packing_script.receive_deliver_order(packing_arg)
-        self._delivering_script.receive_delvier_order(delivering_arg)
-
-
+        self._model_answer.set_text("Hello, what can I do for you?")
+        self.history = []
         self._timeline.play()
 
     def _on_run_scenario_b_text(self):
@@ -256,6 +288,8 @@ class UIBuilder:
         """
         self._on_init()
         self._reset_ui()
+        global_variables.state_machine_id = 0
+        
 
     def _reset_ui(self):
         self._scenario_state_btn.reset()
