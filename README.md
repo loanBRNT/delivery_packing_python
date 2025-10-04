@@ -19,8 +19,8 @@ The goal is to create a prototype for robotic manipulation where a user places a
 1. Clone this repository inside a folder linked to the Isaac Sim **Extension Manager** (by default: `isaacsim/extsUser`).  
 2. Open Isaac Sim, go to the **Extension Manager**, search for `"delivery_packing"`, enable it, and set it to **Auto Load**. See this [tutorial](https://docs.isaacsim.omniverse.nvidia.com/5.0.0/utilities/updating_extensions.html) for more details.
 3. The *delivery_packing* items should now appear in the toolbar menu. Click on it to load the extension.  
-4. In parallel, install **Docker** on your machine following [this guide](https://docs.docker.com/engine/install/ubuntu/).  
-5. Open a terminal inside the `agent` folder and run:  
+4. In parallel, install **Docker** on your machine following [this guide](https://docs.docker.com/engine/install/ubuntu/). You need to have installed [nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
+5. Open a terminal inside the `agent` folder and run:
 
 ```bash
    docker compose up
