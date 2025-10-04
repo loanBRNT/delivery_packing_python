@@ -2,12 +2,12 @@
 version = "1.0.1"
 category = "Simulation"
 title = "delivery_packing"
-description = ""
+description = "Hospital 4.0 : "
 authors = ["Loan BERNAT"]
-repository = ""
-keywords = []
-changelog = "docs/CHANGELOG.md"
-readme = "docs/README.md"
+repository = "https://github.com/loanBRNT/delivery_packing_python"
+keywords = ["robotics","manipulation","collaboration","health"]
+changelog = "CHANGELOG.md"
+readme = "README.md"
 preview_image = "data/preview.png"
 icon = "data/icon.png"
 writeTarget.kit = true
