@@ -2,7 +2,7 @@
 
 services:
   agent:
-    build: .
+    build: ./lang_module
     container_name: Agent
     environment:
       - MODEL_ID=Salesforce/xLAM-2-1b-fc-r
@@ -15,3 +15,24 @@ services:
               device_ids: ['0']
     ports:
       - 8888:8888
+
+  grasp:
+    build: ./grasp_module
+    user: root
+    environment:
+      CUDA_DEVICE_ORDER: "PCI_BUS_ID"
+    stdin_open: true
+    volumes:
+      - ./grasp_module:/home
+    tty: true
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                capabilities: ["gpu"]
+                device_ids: ['0']
+    ports:
+      - "7000:7000" # viewer
+      - "8001:8001" # interact with the model
+    container_name: Grasp

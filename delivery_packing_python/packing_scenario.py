@@ -2,13 +2,13 @@
 
 import numpy as np
 import os
-from isaacsim.core.api.objects import DynamicCuboid, FixedCuboid, GroundPlane, VisualCuboid
+from isaacsim.core.api.objects import FixedCuboid, GroundPlane, VisualCuboid
 from isaacsim.core.prims import SingleArticulation, SingleXFormPrim
-from isaacsim.core.utils import distance_metrics, transformations
+from isaacsim.core.utils import distance_metrics
 from isaacsim.core.utils.numpy.rotations import euler_angles_to_quats, quats_to_rot_matrices
 from isaacsim.core.utils.stage import add_reference_to_stage
 from isaacsim.core.utils.types import ArticulationAction
-from isaacsim.core.utils.viewports import set_camera_view
+from isaacsim.sensors.camera import Camera
 from isaacsim.robot_motion.motion_generation import ArticulationMotionPolicy, RmpFlow
 from isaacsim.robot_motion.motion_generation.interface_config_loader import load_supported_motion_policy_config
 from isaacsim.storage.native import get_assets_root_path
@@ -215,8 +215,16 @@ class PackingScript:
 
         self._ground_plane = GroundPlane("/World/Ground")
 
+        self.camera = Camera(
+            prim_path="/World/camera",
+            position=np.array([0.0, 0.0, 25.0]),
+            frequency=5,
+            resolution=(256, 256),
+            orientation=euler_angles_to_quats(np.array([0, 90, 0]), degrees=True),
+        )
+
         # Return assets that were added to the stage so that they can be registered with the core.World
-        return self._articulation, self._ground_plane, *self._bottles, self._shelve, *self.obstacles, *self._book
+        return self._articulation, self._ground_plane, *self._bottles, self._shelve, *self.obstacles, *self._book, self.camera, *self._tapes
 
     def setup(self):
         """
@@ -242,6 +250,10 @@ class PackingScript:
 
         # Create a script generator to execute my_script().
         self._script_generator = self.my_script()
+
+        self.camera.initialize()
+        self.camera.attach_annotator("distance_to_image_plane")
+        self.camera.attach_annotator("pointcloud")
 
     def reset(self):
         """
@@ -276,6 +288,7 @@ class PackingScript:
             return True
 
     def my_script(self):
+        print(self.camera.get_pointcloud())
         while True:
             yield ()
             if self._delivery and global_variables.state_machine_id == 1:
